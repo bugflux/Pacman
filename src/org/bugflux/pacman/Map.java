@@ -9,9 +9,9 @@ import pt.ua.gboard.FilledGelem;
 import pt.ua.gboard.GBoard;
 
 public class Map implements Walkable {
-	public enum POSITION_TYPE { WALL, HALL };
+	public enum PositionType { WALL, HALL };
 
-	private final POSITION_TYPE map[][];
+	private final PositionType map[][];
 
 	// most of this maps are used for faster testing
 	private final int beanMap[][]; // 0 == inexistent, else gelemId
@@ -40,7 +40,7 @@ public class Map implements Walkable {
 		assert map.length > 0 && map[0].length > 0;
 
 		// declare the maps
-		this.map = new POSITION_TYPE[map.length][map[0].length];
+		this.map = new PositionType[map.length][map[0].length];
 		gelemIdMap = new int[height()][width()];
 		walkersMap = new int[height()][width()];
 		beanMap = new int[height()][width()];
@@ -68,11 +68,11 @@ public class Map implements Walkable {
 						//break;
 
 					case 0:
-						this.map[r][c] = POSITION_TYPE.HALL;
+						this.map[r][c] = PositionType.HALL;
 						break;
 
 					default:
-						this.map[r][c] = POSITION_TYPE.WALL;
+						this.map[r][c] = PositionType.WALL;
 
 						gelemIdMap[r][c] = wallGelemId;
 						screen.draw(gelemIdMap[r][c], r, c, mapLayer);
@@ -124,12 +124,12 @@ public class Map implements Walkable {
 		if(isHall(c)) {
 			gelemIdMap[c.r()][c.c()] = screen.registerGelem(new WallGelem());
 			screen.draw(gelemIdMap[c.r()][c.c()], c.r(), c.c(), mapLayer);
-			map[c.r()][c.c()] = POSITION_TYPE.WALL;
+			map[c.r()][c.c()] = PositionType.WALL;
 		}
 		else { // WALL
 			screen.erase(gelemIdMap[c.r()][c.c()], c.r(), c.c(), mapLayer);
 			gelemIdMap[c.r()][c.c()] = 0;
-			map[c.r()][c.c()] = POSITION_TYPE.HALL;
+			map[c.r()][c.c()] = PositionType.HALL;
 		}
 	}
 
@@ -147,7 +147,7 @@ public class Map implements Walkable {
 	}
 	
 	public boolean isHall(Coord c) {
-		return positionType(c) == POSITION_TYPE.HALL;
+		return positionType(c) == PositionType.HALL;
 	}
 	
 	public boolean isFree(Coord c) {
@@ -173,7 +173,7 @@ public class Map implements Walkable {
 		beanMap[c.r()][c.c()] = 0;
 	}
 	
-	public POSITION_TYPE positionType(Coord c) {
+	public PositionType positionType(Coord c) {
 		assert validPosition(c);
 
 		return map[c.r()][c.c()];
