@@ -31,6 +31,7 @@ public interface Walkable {
 
 	/**
 	 * Checks if a given position is free, i.e., doesn't have walkers there.
+	 * 
 	 * @param c The position's coordinates.
  	 * @return true if the position is free, false otherwise.
 	 */
@@ -39,6 +40,7 @@ public interface Walkable {
 	
 	/**
 	 * Checks if a given position is a Hall (or Wall!). Halls can be walked through, Walls cannot.
+	 * 
 	 * @param c The position's coordinates.
 	 * @return true if the position is Hall, false otherwise.
 	 */
@@ -53,4 +55,26 @@ public interface Walkable {
 	 * @return the new Coordinates.
 	 */
 	public abstract Coord newCoord(Coord c, Direction d);
+	
+	/**
+	 * Determine the PositionType of a position.
+	 * 
+	 * @param c The position's coordinates.
+	 * @return The PositionType for the coordinates.
+	 */
+	public abstract PositionType positionType(Coord c);
+	
+	/**
+	 * Return the height of this Walkable object, in number of positions that a Walker could assume.
+	 * 
+	 * @return The height.
+	 */
+	public abstract int height();
+	
+	/**
+	 * Return the width of this Walkable object, in number of positions that a Walker could assume.
+	 * 
+	 * @return The width.
+	 */
+	public abstract int width();
 }
