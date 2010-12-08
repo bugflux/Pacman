@@ -9,8 +9,6 @@ import pt.ua.gboard.FilledGelem;
 import pt.ua.gboard.GBoard;
 
 public class Map implements Walkable {
-	public enum PositionType { WALL, HALL };
-
 	private final PositionType map[][];
 
 	// most of this maps are used for faster testing

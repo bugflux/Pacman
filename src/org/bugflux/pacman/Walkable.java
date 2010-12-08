@@ -1,6 +1,7 @@
 package org.bugflux.pacman;
 
 public interface Walkable {
+	public static enum PositionType { WALL, HALL };
 	public static enum Direction { UP, DOWN, LEFT, RIGHT };
 	
 	/**
