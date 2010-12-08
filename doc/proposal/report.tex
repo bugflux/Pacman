@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage[portuguese]{babel} % this translates commands like \today into portuguese language!
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\begin{document}
+\title{Proposta de Trabalho para Programação Concorrente Orientada por Objectos}
+\author{André Prata (andreprata@ua.pt)}
+\date{\today}
+
+\maketitle
+
+\section{Proposta}
+Como projecto final da disciplina de Programação Concorrente Orientada por
+Objectos proponho a realização de um jogo 2D baseado no conceito do Pac-Man.
+
+O espaço a duas dimensões será representado por um tabuleiro reticulado, com
+suporte ao package pt.ua.gboard desenvolvido pelo professor Miguel Oliveira e
+Silva. Intrínseca a este reticulado está uma representação do mundo e o seu
+estado, o \textbf{Mapa}, potencialmente partilhada pelas restantes entidades.
+De entre estas, destacam-se:
+
+\begin{itemize}
+\item O \textbf{Jogador}. É a entidade independente na dinâmica do Jogo. Pode
+ser uma pessoa, mas também um sistema de informação ou outro módulo de software.
+
+\item O \textbf{Pac-Man}. O Pac-Man é a entidade que o jogador controla. Por não
+se tratar necessariamente de uma pessoa ou teclado, o Pac-Man é um actor que
+exporta uma interface de atendimento a pedidos relativos ao movimento e outras
+acções que possa tomar.
+
+\item O \textbf{Fantasma}, inimigo do Pac-Man. Trata-se de uma entidade pouco
+dotada de inteligência que se desloca pelo mapa em busca do Pac-Man. Caso se
+encontrem no mesmo espaço, a fatalidade é inevitável e o jogo acaba. Pode
+existir mais do que um Fantasma por mapa num mesmo instante. A sua existência é
+permanente no decorrer do jogo.
+
+\item Os \textbf{Feijões} estão espalhados pelo mapa. Um nível termina quando o
+Pac-Man consome todos os Feijões.
+
+\item Os \textbf{Bónus} aparecem aleatoriamente no mapa, e por tempo limitado.
+Se os apanhar, o Pac-Man ganha pontuanção extra ou vantagens relativamente aos
+inimigos (pode movimentar-se mais depressa, os inimigos mais lentamente, ou
+pode simplesmente tornar-se imune). Deverá ser o Bónus a provocar estas
+mutações no mundo, e das quais as restantes entidades dependem.
+\end{itemize}
+
+\section{Considerações Adicionais}
+A dinâmica de jogo pode complicar-se sistematicamente. Por exemplo, se o
+Pac-Man passar muito tempo sem consumir Feijões duplica-se noutra zona do mapa.
+O Jogador passa a controlar ambas as instâncias concorrentemente e da mesma
+forma. Assim torna-se mais simples capturar mais Feijões mas também se aumenta
+a probabilidade de chocar contra um Fantasma. Esta colisão pode ditar o fim do
+Jogo ou apenas de uma das instâncias do Pac-Man. Poderão ser considerado também
+um número finito de vidas para o Pac-Man, incrementado com boas prestações do
+Jogador.
+
+Os Mapas deverão ser criados e armazenados num ficheiro de texto. Está aberta a
+possibilidade para elementos mutáveis no mapa, como portas entre áreas
+diferentes.
+
+Será necessário pensar numa forma eficaz de sincronizar os eventos de forma a
+que o mapa se actualize a uma taxa constante e à qual todas as entidades
+conseguem ser atendidas caso necessitem de realizar tarefas.
+
+\ldots
+\end{document}
