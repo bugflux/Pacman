@@ -43,4 +43,19 @@ public class SharedMap extends Thread implements Walkable {
 	public Coord newCoord(Coord c, Direction d) {
 		return m.newCoord(c, d);
 	}
+
+	@Override
+	public synchronized PositionType positionType(Coord c) {
+		return m.positionType(c);
+	}
+
+	@Override
+	public int height() {
+		return m.height();
+	}
+
+	@Override
+	public int width() {
+		return m.width();
+	}
 }
