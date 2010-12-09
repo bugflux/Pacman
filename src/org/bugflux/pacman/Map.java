@@ -8,24 +8,25 @@ import pt.ua.gboard.CharGelem;
 import pt.ua.gboard.FilledGelem;
 import pt.ua.gboard.GBoard;
 
-public class Map implements Walkable {
-	private final PositionType map[][];
+public class Map implements MorphingWalkable {
+	protected final PositionType map[][];
 
 	// most of this maps are used for faster testing
-	private final int beanMap[][]; // 0 == inexistent, else gelemId
-	private final int gelemIdMap[][]; // used for walls
-	private final int walkersMap[][];
-	private int remainingBeans;
+	protected final int beanMap[][]; // 0 == inexistent, else gelemId
+	protected final int gelemIdMap[][]; // used for walls
+	protected final int walkersMap[][];
+	protected int remainingBeans;
 
-	private final Set<Walker> walkers;
+	protected final Set<Walker> walkers;
 
-	private final GBoard screen;
-	private final int numLayers = 4;
-	private final int backgroundLayer = 0;
-	private final int mapLayer = backgroundLayer + 1;
-	private final int beanLayer = mapLayer + 1;
-	private final int walkerLayer = beanLayer + 1;
-	
+	protected final GBoard screen;
+	protected final int numLayers = 3;
+	protected final int mapLayer = 0;
+	protected final int beanLayer = mapLayer + 1;
+	protected final int walkerLayer = beanLayer + 1;
+
+	protected final int wallGelemId;
+	protected final int backgroundGelemId;
 	/**
 	 * .
 	 * A char map is a 2D char array. Each position contains:
@@ -50,12 +51,12 @@ public class Map implements Walkable {
 		// the third layer is for correct path marking
 		screen = GBoard.init("Pac-Man", height(), width(), 30, 30, numLayers);
 
-		int backgroundGelemId = screen.registerGelem(new FilledGelem(Color.black, 100.0));
-		int wallGelemId = screen.registerGelem(new WallGelem());
+		backgroundGelemId = screen.registerGelem(new FilledGelem(Color.black, 100.0));
+		wallGelemId = screen.registerGelem(new WallGelem());
 		int beanGelemId = screen.registerGelem(new BeanGelem());
 		for(int r = 0; r < height(); r++) {
 			for(int c = 0; c < width(); c++) {
-				screen.draw(backgroundGelemId, r, c, backgroundLayer);
+				screen.draw(backgroundGelemId, r, c, mapLayer);
 				switch(map[r][c]) {
 					case '.':
 						//this.map[r][c] = POSITION_TYPE.HALL;
@@ -116,21 +117,30 @@ public class Map implements Walkable {
 		return c;
 	}
 
-	public void toggleDoor(Coord c) {
-		assert isFree(c) && !hasBean(c);
+	@Override
+	public PositionType togglePositionType(Coord c) {
+		assert canToggle(c);
 
 		if(isHall(c)) {
-			gelemIdMap[c.r()][c.c()] = screen.registerGelem(new WallGelem());
+			screen.erase(gelemIdMap[c.r()][c.c()], c.r(), c.c(), mapLayer);
+			gelemIdMap[c.r()][c.c()] = wallGelemId;
 			screen.draw(gelemIdMap[c.r()][c.c()], c.r(), c.c(), mapLayer);
-			map[c.r()][c.c()] = PositionType.WALL;
+			return map[c.r()][c.c()] = PositionType.WALL;
 		}
 		else { // WALL
 			screen.erase(gelemIdMap[c.r()][c.c()], c.r(), c.c(), mapLayer);
-			gelemIdMap[c.r()][c.c()] = 0;
-			map[c.r()][c.c()] = PositionType.HALL;
+			gelemIdMap[c.r()][c.c()] = backgroundGelemId;
+			screen.draw(gelemIdMap[c.r()][c.c()], c.r(), c.c(), mapLayer);
+			return map[c.r()][c.c()] = PositionType.HALL;
 		}
 	}
+	
+	@Override
+	public boolean canToggle(Coord c) {
+		return isFree(c) && !hasBean(c);
+	}
 
+	@Override
 	public Coord newCoord(Coord oldC, Direction d) {
 		Coord c = null;
 		switch(d) {
@@ -143,11 +153,13 @@ public class Map implements Walkable {
 		
 		return c;
 	}
-	
+
+	@Override
 	public boolean isHall(Coord c) {
 		return positionType(c) == PositionType.HALL;
 	}
-	
+
+	@Override
 	public boolean isFree(Coord c) {
 		assert validPosition(c);
 
@@ -171,12 +183,14 @@ public class Map implements Walkable {
 		beanMap[c.r()][c.c()] = 0;
 	}
 	
+	@Override
 	public PositionType positionType(Coord c) {
 		assert validPosition(c);
 
 		return map[c.r()][c.c()];
 	}
 
+	@Override
 	public boolean validPosition(Coord c) {
 		return validPosition(c.r(), c.c());
 	}
@@ -186,10 +200,12 @@ public class Map implements Walkable {
 			&& c >= 0 && c < width();
 	}
 
+	@Override
 	public int height() {
 		return map.length;
 	}
 
+	@Override
 	public int width() {
 		return map[0].length;
 	}
