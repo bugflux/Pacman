@@ -5,7 +5,6 @@ import org.bugflux.pacman.Map;
 import org.bugflux.pacman.Walkable;
 import org.bugflux.pacman.Walker;
 
-
 public class SharedMap extends Thread implements Walkable {
 	protected final Map m;
 
