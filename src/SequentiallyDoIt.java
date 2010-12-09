@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.Map;
+import org.bugflux.pacman.WalkerMover;
 import org.bugflux.pacman.Pacman;
 import org.bugflux.pacman.PositionToggler;
 import org.bugflux.pacman.input.KeyboardMover;
@@ -24,7 +25,7 @@ public class SequentiallyDoIt {
 		Map m = new Map(readLabyrinth(args[0]));
 
 		Pacman p = new Pacman(m, new Coord(1, 1));
-		KeyboardMover pacmanController = new KeyboardMover(p);
+		KeyboardMover pacmanController = new KeyboardMover(new WalkerMover(p));
 		m.getGBoard().addKeyListener(pacmanController);
 
 		MousePositionToggler mpt = new MousePositionToggler(new PositionToggler(m), m.getGBoard());

@@ -3,15 +3,15 @@ package org.bugflux.pacman.input;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import org.bugflux.pacman.Mover;
-import org.bugflux.pacman.Walker;
+import org.bugflux.pacman.WalkerMover;
 import org.bugflux.pacman.Walkable.Direction;
 
 
-public class KeyboardMover extends Mover implements KeyListener {
+public class KeyboardMover implements KeyListener {
+	protected final WalkerMover m;
 
-	public KeyboardMover(Walker w) {
-		super(w);
+	public KeyboardMover(WalkerMover m) {
+		this.m = m;
 	}
 
 	@Override
@@ -22,10 +22,10 @@ public class KeyboardMover extends Mover implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch(e.getKeyCode()) {
-			case java.awt.event.KeyEvent.VK_UP:    move(Direction.UP);    break;
-			case java.awt.event.KeyEvent.VK_DOWN:  move(Direction.DOWN);  break;
-			case java.awt.event.KeyEvent.VK_RIGHT: move(Direction.RIGHT); break;
-			case java.awt.event.KeyEvent.VK_LEFT:  move(Direction.LEFT);  break;
+			case java.awt.event.KeyEvent.VK_UP:    m.move(Direction.UP);    break;
+			case java.awt.event.KeyEvent.VK_DOWN:  m.move(Direction.DOWN);  break;
+			case java.awt.event.KeyEvent.VK_RIGHT: m.move(Direction.RIGHT); break;
+			case java.awt.event.KeyEvent.VK_LEFT:  m.move(Direction.LEFT);  break;
 			default: // not supported
 		}
 	}
