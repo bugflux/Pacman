@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.KeyboardMover;
 import org.bugflux.pacman.Map;
+import org.bugflux.pacman.MousePositionToggler;
 import org.bugflux.pacman.Pacman;
 
 
@@ -24,6 +25,9 @@ public class SequentiallyDoIt {
 		Pacman p = new Pacman(m, new Coord(1, 1));
 		KeyboardMover pacmanController = new KeyboardMover(p);
 		m.getGBoard().addKeyListener(pacmanController);
+		
+		MousePositionToggler mpt = new MousePositionToggler(m, m.getGBoard());
+		m.getGBoard().addMouseListener(mpt);
 	}
 
 	public static char[][] readLabyrinth(String filename) throws Exception {
