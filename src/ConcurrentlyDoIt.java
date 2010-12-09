@@ -13,8 +13,10 @@ import org.bugflux.pacman.Pacman;
 import org.bugflux.pacman.concurrent.KeyboardMoveEvent;
 import org.bugflux.pacman.concurrent.SharedMap;
 import org.bugflux.pacman.concurrent.SharedPacman;
+import org.bugflux.pacman.concurrent.SharedPositionToggler;
 import org.bugflux.pacman.concurrent.SharedTickMap;
 import org.bugflux.pacman.concurrent.WalkerController;
+import org.bugflux.pacman.input.MousePositionToggler;
 
 
 public class ConcurrentlyDoIt {
@@ -33,8 +35,10 @@ public class ConcurrentlyDoIt {
 		KeyboardMoveEvent kme = new KeyboardMoveEvent();
 		m.getGBoard().addKeyListener(kme);
 		WalkerController controller = new WalkerController(p, kme);
-		
 		controller.start();
+
+		MousePositionToggler pt = new MousePositionToggler(new SharedPositionToggler(m), m.getGBoard());
+		m.getGBoard().addMouseListener(pt);
 	}
 
 	public static char[][] readLabyrinth(String filename) throws Exception {

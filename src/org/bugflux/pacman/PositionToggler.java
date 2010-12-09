@@ -16,4 +16,12 @@ public class PositionToggler {
 
 		return w.positionType(c);
 	}
+	
+	public int height() {
+		return w.height();
+	}
+	
+	public int width() {
+		return w.width();
+	}
 }
