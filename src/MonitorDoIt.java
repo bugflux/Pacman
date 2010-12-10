@@ -31,13 +31,22 @@ public class MonitorDoIt {
 		KeyboardMover controller = new KeyboardMover(new MonitorWalkerMover(new WalkerMover(pacman)));
 		_map.getGBoard().addKeyListener(controller);
 		
-		Controllable pinky = new MonitorWalker(new Phantom(map, new Coord(1, 2), _map.getGBoard(), Guy.Pinky));
+		Controllable pinky = new MonitorWalker(new Phantom(map, new Coord(7, 10), _map.getGBoard(), Guy.Pinky));
 		RandomMover controller2 = new RandomMover(new MonitorWalkerMover(new WalkerMover(pinky)));
-		controller2.start();
 		
-		Controllable blinky = new MonitorWalker(new Phantom(map, new Coord(2, 1), _map.getGBoard(), Guy.Blinky));
+		Controllable blinky = new MonitorWalker(new Phantom(map, new Coord(7, 11), _map.getGBoard(), Guy.Blinky));
 		RandomMover controller3 = new RandomMover(new MonitorWalkerMover(new WalkerMover(blinky)));
+		
+		Controllable inky = new MonitorWalker(new Phantom(map, new Coord(7, 12), _map.getGBoard(), Guy.Inky));
+		RandomMover controller4 = new RandomMover(new MonitorWalkerMover(new WalkerMover(inky)));
+		
+		Controllable clyde = new MonitorWalker(new Phantom(map, new Coord(7, 13), _map.getGBoard(), Guy.Clyde));
+		RandomMover controller5 = new RandomMover(new MonitorWalkerMover(new WalkerMover(clyde)));
+		
+		controller2.start();
 		controller3.start();
+		controller4.start();
+		controller5.start();
 
 		MousePositionToggler toggler = new MousePositionToggler(new MonitorPositionToggler(map), _map.getGBoard());
 		_map.getGBoard().addMouseListener(toggler);
