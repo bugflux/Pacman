@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bugflux.pacman.entities.MorphingWalkable;
 import org.bugflux.pacman.entities.Controllable;
+import org.bugflux.pacman.entities.MorphingWalkable;
 
 import pt.ua.gboard.CharGelem;
 import pt.ua.gboard.FilledGelem;
@@ -231,7 +231,7 @@ class WallGelem extends FilledGelem {
 
 class BeanGelem extends CharGelem {
 	public BeanGelem() {
-		super('.', Color.white);
+		super('.', Color.yellow);
 	}
 }
 

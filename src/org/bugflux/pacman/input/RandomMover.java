@@ -2,6 +2,7 @@ package org.bugflux.pacman.input;
 
 import java.util.Random;
 
+import org.bugflux.lock.UncheckedInterruptedException;
 import org.bugflux.pacman.entities.Mover;
 import org.bugflux.pacman.entities.Walkable.Direction;
 
@@ -17,6 +18,12 @@ public class RandomMover extends Thread {
 			Random r = new Random();
 			Direction d[] = { Direction.UP, Direction.DOWN, Direction.RIGHT, Direction.LEFT };
 			m.tryMove(d[r.nextInt(d.length)]);
+
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				throw new UncheckedInterruptedException(e);
+			} // TODO remove
 		}
 	}
 }

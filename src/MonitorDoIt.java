@@ -3,12 +3,14 @@
 import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.Map;
 import org.bugflux.pacman.Pacman;
+import org.bugflux.pacman.Phantom;
+import org.bugflux.pacman.Phantom.Guy;
 import org.bugflux.pacman.WalkerMover;
 import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.MorphingWalkable;
-import org.bugflux.pacman.input.RandomMover;
 import org.bugflux.pacman.input.KeyboardMover;
 import org.bugflux.pacman.input.MousePositionToggler;
+import org.bugflux.pacman.input.RandomMover;
 import org.bugflux.pacman.monitor.MonitorMap;
 import org.bugflux.pacman.monitor.MonitorPositionToggler;
 import org.bugflux.pacman.monitor.MonitorWalker;
@@ -29,9 +31,13 @@ public class MonitorDoIt {
 		KeyboardMover controller = new KeyboardMover(new MonitorWalkerMover(new WalkerMover(pacman)));
 		_map.getGBoard().addKeyListener(controller);
 		
-		Controllable pacman2 = new MonitorWalker(new Pacman(map, new Coord(1, 2)));
-		RandomMover controller2 = new RandomMover(new MonitorWalkerMover(new WalkerMover(pacman2)));
+		Controllable pinky = new MonitorWalker(new Phantom(map, new Coord(1, 2), _map.getGBoard(), Guy.Pinky));
+		RandomMover controller2 = new RandomMover(new MonitorWalkerMover(new WalkerMover(pinky)));
 		controller2.start();
+		
+		Controllable blinky = new MonitorWalker(new Phantom(map, new Coord(2, 1), _map.getGBoard(), Guy.Blinky));
+		RandomMover controller3 = new RandomMover(new MonitorWalkerMover(new WalkerMover(blinky)));
+		controller3.start();
 
 		MousePositionToggler toggler = new MousePositionToggler(new MonitorPositionToggler(map), _map.getGBoard());
 		_map.getGBoard().addMouseListener(toggler);
