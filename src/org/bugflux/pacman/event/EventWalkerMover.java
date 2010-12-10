@@ -1,42 +1,36 @@
 package org.bugflux.pacman.event;
 
-import org.bugflux.lock.UncheckedInterruptedException;
+import org.bugflux.lock.Signal;
 import org.bugflux.pacman.Coord;
+import org.bugflux.pacman.WalkerMover;
 import org.bugflux.pacman.entities.Mover;
 import org.bugflux.pacman.entities.Walkable.Direction;
 
 public class EventWalkerMover extends Thread implements Mover {
-	protected Direction nextD;
+	protected final WalkerMover m;
 	protected volatile boolean hasMove;
+	protected volatile Direction d;
+	protected final Signal s;
 	
-	public EventWalkerMover() {
-		hasMove = false;
+	public EventWalkerMover(WalkerMover m) {
+		this.m = m;
+		s = new Signal();
 	}
 	
-	public synchronized void put(Direction d) {
-		nextD = d;
-		hasMove = true;
-
-		notify();
-	}
-	
-	protected synchronized Direction get() {
-		while(!hasMove) {
-			try {
-				wait();
-			}
-			catch(InterruptedException e) {
-				throw new UncheckedInterruptedException(e);
-			}
+	public void run() {
+		while(true) {
+			s.await();
+			m.tryMove(d);
 		}
-
-		hasMove = false;
-		return nextD;
 	}
 
+	/**
+	 * TODO returned Coord doesn't make sense!
+	 */
 	@Override
 	public Coord tryMove(Direction d) {
-		// TODO Auto-generated method stub
-		return null;
+		this.d = d;
+		s.send();
+		return null; // always does!!
 	}
 }

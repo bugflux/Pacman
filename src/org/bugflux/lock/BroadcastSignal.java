@@ -1,17 +1,17 @@
 package org.bugflux.lock;
 
-public class Signal {
-	protected boolean arrived;
-
-	public Signal() {
-		arrived = false;
+public class BroadcastSignal extends Signal {
+	public BroadcastSignal() {
+		super();
 	}
 
+	@Override
 	public synchronized void send() {
 		arrived = true;
-		notify();
+		notifyAll();
 	}
 
+	@Override
 	public synchronized void await() {
 		try {
 			while(!arrived) {

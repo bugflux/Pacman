@@ -35,7 +35,6 @@ public class TickMap implements MorphingWalkable {
 		mutex.lock();
 		w.addWalker(co, c);
 		mutex.unlock();
-		tick.await();
 	}
 
 	@Override

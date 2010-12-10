@@ -6,7 +6,7 @@ import org.bugflux.pacman.Pacman;
 import org.bugflux.pacman.WalkerMover;
 import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.MorphingWalkable;
-import org.bugflux.pacman.input.AutonomousMover;
+import org.bugflux.pacman.input.RandomMover;
 import org.bugflux.pacman.input.KeyboardMover;
 import org.bugflux.pacman.input.MousePositionToggler;
 import org.bugflux.pacman.monitor.MonitorMap;
@@ -30,7 +30,7 @@ public class MonitorDoIt {
 		_map.getGBoard().addKeyListener(controller);
 		
 		Controllable pacman2 = new MonitorWalker(new Pacman(map, new Coord(1, 2)));
-		AutonomousMover controller2 = new AutonomousMover(new MonitorWalkerMover(new WalkerMover(pacman2)));
+		RandomMover controller2 = new RandomMover(new MonitorWalkerMover(new WalkerMover(pacman2)));
 		controller2.start();
 
 		MousePositionToggler toggler = new MousePositionToggler(new MonitorPositionToggler(map), _map.getGBoard());

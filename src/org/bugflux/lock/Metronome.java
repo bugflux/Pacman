@@ -1,6 +1,6 @@
 package org.bugflux.lock;
 
-public class Metronome extends Signal implements Runnable {
+public class Metronome extends BroadcastSignal implements Runnable {
 	protected int ms;
 
 	public Metronome(int ms) {
