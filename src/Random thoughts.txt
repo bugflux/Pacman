@@ -1,0 +1,32 @@
+Fantasmas e Pacmans são a mesma coisa, na perspectiva do Mapa -- Caminhantes,
+ou Walkers. Apenas a sua aparência é diferente, motivo pelo qual os métodos
+para os adicionar têm nomes distintos. Qualquer entidade pode atribuir o ID que
+pretender a um Walker, ao adicioná-lo.
+
+Para fazer a separação entre Mapa Sequencial e Mapa Partilhado, o Mapa
+sequencial permite a adição de Pacmans e Fantasmas com um determinado ID do
+tipo long. Estes id são utilizados pelo Mapa Sequencial para coordenar as
+acções de movimentação e redesenho do mapa. Já o Mapa Partilhado, ciente do
+ambiente concorrente, é que faz a correspondência entre o ID do Walker e o
+número da thread que o invoca. Isto é óptimo para garantir a independência das
+entidades, assim o Mapa Partilhado permite que apenas uma thread controle a sua
+entidade. Um Pacman concorrente não pode pedir ao mapa que um Fantasma
+concorrente se mova, só porque sabe o seu ID.
+
+Mais, este mecanismo facilita a recriação de uma das imposições do mundo. Não
+fica a cargo do pacman a tarefa de limitar a velocidade a que se move, por
+exemplo. O Pacman desloca-se à velocidade máxima que quem o controla pretender.
+É o mundo, e as suas leis, que fazem com que esse movimento tenha restrições.
+Assim, as operações com efeito no mundo, como a movimentação, estão sujeitas a
+uma variável de condição sinalizada a uma frequência constante, o metrónomo.
+
+
+As portas seguem a mesma lógica.
+
+
+///////
+9 Dez
+
+É necessário implementar o movimento e os eventos do teclado sob a forma de
+eventos consumidos, pois o GBoard faz buffering dos keypresses e depois
+processa todos de uma vez.

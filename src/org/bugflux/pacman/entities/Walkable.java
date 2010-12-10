@@ -1,4 +1,6 @@
-package org.bugflux.pacman;
+package org.bugflux.pacman.entities;
+
+import org.bugflux.pacman.Coord;
 
 public interface Walkable {
 	public static enum PositionType { WALL, HALL };
@@ -10,7 +12,7 @@ public interface Walkable {
 	 * @param w The walker that wishes to move.
 	 * @return the new Coordinates of the walker.
 	 */
-	public abstract Coord move(Walker w, Direction d);
+	public abstract Coord tryMove(Controllable w, Direction d);
 	
 	/**
 	 * Add a Walker to a specified row,column coordinate.
@@ -19,7 +21,7 @@ public interface Walkable {
 	 * @param r The row index.
 	 * @param c The column index.
 	 */
-	public abstract void addWalker(Walker w, Coord c);
+	public abstract void addWalker(Controllable w, Coord c);
 
 	/**
 	 * Checks if a given position is valid for this walkable space.

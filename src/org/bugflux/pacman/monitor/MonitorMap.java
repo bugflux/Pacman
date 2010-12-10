@@ -1,24 +1,24 @@
-package org.bugflux.pacman.concurrent;
+package org.bugflux.pacman.monitor;
 
 import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.Map;
-import org.bugflux.pacman.Walkable;
-import org.bugflux.pacman.Walker;
+import org.bugflux.pacman.entities.MorphingWalkable;
+import org.bugflux.pacman.entities.Controllable;
 
-public class SharedMap extends Thread implements Walkable {
+public class MonitorMap extends Thread implements MorphingWalkable {
 	protected final Map m;
 
-	public SharedMap(Map m) {
+	public MonitorMap(Map m) {
 		this.m = m;
 	}
 
 	@Override
-	public synchronized Coord move(Walker w, Direction d) {
-		return m.move(w, d);
+	public synchronized Coord tryMove(Controllable w, Direction d) {
+		return m.tryMove(w, d);
 	}
 
 	@Override
-	public void addWalker(Walker w, Coord c) {
+	public void addWalker(Controllable w, Coord c) {
 		m.addWalker(w, c);
 	}
 
@@ -56,5 +56,15 @@ public class SharedMap extends Thread implements Walkable {
 	@Override
 	public int width() {
 		return m.width();
+	}
+
+	@Override
+	public synchronized PositionType tryTogglePositionType(Coord c) {
+		return m.tryTogglePositionType(c);
+	}
+
+	@Override
+	public synchronized boolean canToggle(Coord c) {
+		return m.canToggle(c);
 	}
 }

@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bugflux.pacman.entities.MorphingWalkable;
+import org.bugflux.pacman.entities.Controllable;
+
 import pt.ua.gboard.CharGelem;
 import pt.ua.gboard.FilledGelem;
 import pt.ua.gboard.GBoard;
@@ -17,7 +20,7 @@ public class Map implements MorphingWalkable {
 	protected final int walkersMap[][];
 	protected int remainingBeans;
 
-	protected final Set<Walker> walkers;
+	protected final Set<Controllable> walkers;
 
 	protected final GBoard screen;
 	protected final int numLayers = 3;
@@ -44,7 +47,7 @@ public class Map implements MorphingWalkable {
 		walkersMap = new int[height()][width()];
 		beanMap = new int[height()][width()];
 
-		walkers = new HashSet<Walker>();
+		walkers = new HashSet<Controllable>();
 
 		// declare and initialize the screen
 		// the first layer is for the map (walls, halls, doors),r
@@ -83,7 +86,7 @@ public class Map implements MorphingWalkable {
 	}
 
 	@Override
-	public void addWalker(Walker w, Coord c) {
+	public void addWalker(Controllable w, Coord c) {
 		assert isHall(c) && isFree(c);
 
 		if(hasBean(c)) {
@@ -96,30 +99,35 @@ public class Map implements MorphingWalkable {
 	}
 	
 	@Override
-	public Coord move(Walker w, Direction d) {
-		Coord oldC = w.getCoord();
-		assert !isFree(oldC);
+	public Coord tryMove(Controllable w, Direction d) {
 		assert walkers.contains(w);
-		
+		Coord oldC = w.getCoord();
 		Coord c = newCoord(oldC, d);
-		
-		assert validPosition(c) && isHall(c); // TODO allow?
+
+		if(!validPosition(c) || !isHall(c)) {
+			return oldC;
+		}
 		
 		if(isFree(c)) {
 			screen.move(walkersMap[oldC.r()][oldC.c()], oldC.r(), oldC.c(), walkerLayer, c.r(), c.c(), walkerLayer);
 			walkersMap[c.r()][c.c()] = walkersMap[oldC.r()][oldC.c()];
 			walkersMap[oldC.r()][oldC.c()] = 0;
+			return c;
 		}
 		else { // collision!
 			// TODO
+			System.err.println("Collision!");
+			return oldC;
 		}
-		
-		return c;
 	}
 
 	@Override
-	public PositionType togglePositionType(Coord c) {
-		assert canToggle(c);
+	public PositionType tryTogglePositionType(Coord c) {
+		assert validPosition(c);
+
+		if(!canToggle(c)) {
+			return map[c.r()][c.c()];
+		}
 
 		if(isHall(c)) {
 			screen.erase(gelemIdMap[c.r()][c.c()], c.r(), c.c(), mapLayer);

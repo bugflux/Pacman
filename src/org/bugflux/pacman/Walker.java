@@ -1,32 +1,43 @@
 package org.bugflux.pacman;
 
-import org.bugflux.pacman.Walkable.Direction;
+import org.bugflux.pacman.entities.Controllable;
+import org.bugflux.pacman.entities.Walkable;
+import org.bugflux.pacman.entities.Walkable.Direction;
 
 import pt.ua.gboard.Gelem;
 
-public interface Walker {
-	/**
-	 * 
-	 * @return
-	 */
-	public abstract Coord getCoord();
+public class Walker implements Controllable {
+	protected final Gelem gelem;
+	protected final Walkable w;
+	protected Coord c;
+
+	public Walker(Walkable w, Coord c, Gelem g) {
+		assert w != null && c != null;
+
+		this.w = w;
+		this.c = c;
+		this.gelem = g;
+		this.w.addWalker(this, this.c);
+	}
+
+	@Override
+	public Coord getCoord() {
+		return c;
+	}
+
+	@Override
+	public Coord tryMove(Direction d) {
+		return c = w.tryMove(this, d);
+	}
 	
-	/**
-	 * 
-	 * @param d
-	 * @return
-	 */
-	public abstract void tryMove(Direction d);
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public abstract Gelem gelem();
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public abstract boolean canMove(Direction d);
+	@Override
+	public Gelem gelem() {
+		return gelem;
+	}
+
+	@Override
+	public boolean canMove(Direction d) {
+		Coord c = w.newCoord(this.c, d);
+		return w.validPosition(c) && w.isHall(c);
+	}
 }

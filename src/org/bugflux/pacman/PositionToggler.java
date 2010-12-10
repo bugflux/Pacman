@@ -1,8 +1,10 @@
 package org.bugflux.pacman;
 
-import org.bugflux.pacman.Walkable.PositionType;
+import org.bugflux.pacman.entities.MorphingWalkable;
+import org.bugflux.pacman.entities.Toggler;
+import org.bugflux.pacman.entities.Walkable.PositionType;
 
-public class PositionToggler {
+public class PositionToggler implements Toggler {
 	protected MorphingWalkable w;
 
 	public PositionToggler(MorphingWalkable w) {
@@ -11,7 +13,7 @@ public class PositionToggler {
 	
 	public PositionType tryToggle(Coord c) {	
 		if(w.canToggle(c)) {
-			return w.togglePositionType(c);
+			return w.tryTogglePositionType(c);
 		}
 
 		return w.positionType(c);

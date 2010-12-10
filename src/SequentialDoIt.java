@@ -8,14 +8,14 @@ import java.util.ArrayList;
 
 import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.Map;
-import org.bugflux.pacman.WalkerMover;
 import org.bugflux.pacman.Pacman;
 import org.bugflux.pacman.PositionToggler;
+import org.bugflux.pacman.WalkerMover;
 import org.bugflux.pacman.input.KeyboardMover;
 import org.bugflux.pacman.input.MousePositionToggler;
 
 
-public class SequentiallyDoIt {
+public class SequentialDoIt {
 	public static void main(String args[]) throws Throwable {
 		if(args.length != 1) {
 			System.out.println("usage: java -ea DoIt <map filename>");

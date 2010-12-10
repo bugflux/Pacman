@@ -1,4 +1,6 @@
-package org.bugflux.pacman;
+package org.bugflux.pacman.entities;
+
+import org.bugflux.pacman.Coord;
 
 public interface MorphingWalkable extends Walkable {
 
@@ -8,7 +10,7 @@ public interface MorphingWalkable extends Walkable {
 	 * @param c The position's coordinates.
 	 * @return The new PositionType for that position.
 	 */
-	public abstract PositionType togglePositionType(Coord c);
+	public abstract PositionType tryTogglePositionType(Coord c);
 	
 	/**
 	 * Check if it is possible to toggle a given position.

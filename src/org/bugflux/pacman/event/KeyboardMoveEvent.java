@@ -1,11 +1,11 @@
-package org.bugflux.pacman.concurrent;
+package org.bugflux.pacman.event;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import org.bugflux.pacman.Walkable.Direction;
+import org.bugflux.pacman.entities.Walkable.Direction;
 
-public class KeyboardMoveEvent extends MoveEvent implements KeyListener {
+public class KeyboardMoveEvent extends EventWalkerMover implements KeyListener {
 	
 	@Override
 	public void keyTyped(KeyEvent e) {

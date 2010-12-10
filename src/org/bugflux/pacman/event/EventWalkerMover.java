@@ -1,13 +1,15 @@
-package org.bugflux.pacman.concurrent;
+package org.bugflux.pacman.event;
 
 import org.bugflux.lock.UncheckedInterruptedException;
-import org.bugflux.pacman.Walkable.Direction;
+import org.bugflux.pacman.Coord;
+import org.bugflux.pacman.entities.Mover;
+import org.bugflux.pacman.entities.Walkable.Direction;
 
-public class MoveEvent implements MoveEventReceiver, MoveEventSender {
+public class EventWalkerMover extends Thread implements Mover {
 	protected Direction nextD;
 	protected volatile boolean hasMove;
 	
-	public MoveEvent() {
+	public EventWalkerMover() {
 		hasMove = false;
 	}
 	
@@ -18,7 +20,7 @@ public class MoveEvent implements MoveEventReceiver, MoveEventSender {
 		notify();
 	}
 	
-	public synchronized Direction get() {
+	protected synchronized Direction get() {
 		while(!hasMove) {
 			try {
 				wait();
@@ -30,5 +32,11 @@ public class MoveEvent implements MoveEventReceiver, MoveEventSender {
 
 		hasMove = false;
 		return nextD;
+	}
+
+	@Override
+	public Coord tryMove(Direction d) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
