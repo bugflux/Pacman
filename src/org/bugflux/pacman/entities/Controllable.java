@@ -30,4 +30,9 @@ public interface Controllable {
 	 * @return
 	 */
 	public abstract boolean canMove(Direction d);
+	
+	/**
+	 * 
+	 */
+	public abstract void kill();
 }

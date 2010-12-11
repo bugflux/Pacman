@@ -4,14 +4,16 @@ import java.awt.Color;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
+import org.bugflux.pacman.entities.Garden;
 import org.bugflux.pacman.entities.MorphingWalkable;
 
 import pt.ua.gboard.CharGelem;
 import pt.ua.gboard.FilledGelem;
 import pt.ua.gboard.GBoard;
 
-public class Map implements MorphingWalkable {
+public class Map implements Garden, MorphingWalkable {
 	protected final PositionType map[][];
 
 	// most of this maps are used for faster testing
@@ -59,7 +61,6 @@ public class Map implements MorphingWalkable {
 		int beanGelemId = screen.registerGelem(new BeanGelem());
 		for(int r = 0; r < height(); r++) {
 			for(int c = 0; c < width(); c++) {
-				screen.draw(backgroundGelemId, r, c, mapLayer);
 				switch(map[r][c]) {
 					case '.':
 						//this.map[r][c] = POSITION_TYPE.HALL;
@@ -71,6 +72,8 @@ public class Map implements MorphingWalkable {
 
 					case 0:
 						this.map[r][c] = PositionType.HALL;
+						gelemIdMap[r][c] = backgroundGelemId;
+						screen.draw(gelemIdMap[r][c], r, c, mapLayer);
 						break;
 
 					default:
@@ -97,7 +100,7 @@ public class Map implements MorphingWalkable {
 		screen.draw(walkersMap[c.r()][c.c()], c.r(), c.c(), walkerLayer);
 		walkers.add(w);
 	}
-	
+
 	@Override
 	public Coord tryMove(Controllable w, Direction d) {
 		assert walkers.contains(w);
@@ -109,16 +112,58 @@ public class Map implements MorphingWalkable {
 		}
 		
 		if(isFree(c)) {
+			try {
+				Collector collector = (Collector)w;
+				if(collector.looseEnergy(1) <= 0) {
+					System.err.println("died");
+					w.kill();
+					// TODO kill him
+				}
+				
+				if(hasBean(c)) {
+					removeBean(c);
+					collector.gainEnergy(10);
+					
+					if(remainingBeans() == 0) {
+						// TODO finish
+					}
+				}
+			}
+			catch(ClassCastException e) {
+				//System.err.println("unable to cast!");
+				// do nothing, actually!
+			}
+
 			screen.move(walkersMap[oldC.r()][oldC.c()], oldC.r(), oldC.c(), walkerLayer, c.r(), c.c(), walkerLayer);
 			walkersMap[c.r()][c.c()] = walkersMap[oldC.r()][oldC.c()];
 			walkersMap[oldC.r()][oldC.c()] = 0;
+			
 			return c;
 		}
 		else { // collision!
-			// TODO
-			System.err.println("Collision!");
+			// TODO kill him, but only if it's from a different team!
+			w.kill();
 			return oldC;
 		}
+	}
+	
+	@Override
+	public int tryCollect(Collector w) {
+		assert walkers.contains(w);
+		Coord c = w.getCoord();
+		
+		if(hasBean(c)) {
+			removeBean(c);
+			return 10;
+		}
+		
+		return 0;
+	}
+
+	@Override
+	public boolean hasCollectable(Coord c) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override

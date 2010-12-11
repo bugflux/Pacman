@@ -13,6 +13,7 @@ import org.bugflux.pacman.Phantom;
 import org.bugflux.pacman.Phantom.Guy;
 import org.bugflux.pacman.PositionToggler;
 import org.bugflux.pacman.WalkerMover;
+import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.input.KeyboardMover;
 import org.bugflux.pacman.input.MousePositionToggler;
 
@@ -26,11 +27,11 @@ public class SequentialDoIt {
 
 		Map m = new Map(readLabyrinth(args[0]));
 
-		Pacman p = new Pacman(m, new Coord(1, 1));
+		Collector p = new Pacman(m, new Coord(1, 1));
 		KeyboardMover pacmanController = new KeyboardMover(new WalkerMover(p));
 		m.getGBoard().addKeyListener(pacmanController);
 		
-		/*Pinky pinky = */new Phantom(m, new Coord(1, 2), m.getGBoard(), Guy.Pinky);
+		/*Pinky pinky = */new Phantom(m, new Coord(7, 12), m.getGBoard(), Guy.Pinky);
 
 		MousePositionToggler mpt = new MousePositionToggler(new PositionToggler(m), m.getGBoard());
 		m.getGBoard().addMouseListener(mpt);

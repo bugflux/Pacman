@@ -32,4 +32,9 @@ public class MonitorWalker implements Controllable {
 	public Gelem gelem() {
 		return w.gelem();
 	}
+
+	@Override
+	public void kill() {
+		w.kill();
+	}
 }

@@ -40,4 +40,9 @@ public class Walker implements Controllable {
 		Coord c = w.newCoord(this.c, d);
 		return w.validPosition(c) && w.isHall(c);
 	}
+
+	@Override
+	public void kill() {
+		System.err.println("killed!");
+	}
 }

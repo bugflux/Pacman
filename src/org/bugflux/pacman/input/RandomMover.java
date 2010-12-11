@@ -28,16 +28,16 @@ public class RandomMover extends Thread {
 			currentD = d[r.nextInt(d.length)]; // new, Random direction
 			
 			// if last direction originated a move,
-			// move in the same direction with .8 probability!
+			// move in the same direction with .75 probability!
 			if(currentC != previousC) {
-				currentD = r.nextDouble() < 0.8 ? previousD : currentD;
+				currentD = r.nextDouble() < 0.75 ? previousD : currentD;
 			}
 			
 			previousC = currentC;
 			currentC = m.tryMove(currentD);
 
 			try {
-				Thread.sleep(200);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				throw new UncheckedInterruptedException(e);
 			} // TODO remove
