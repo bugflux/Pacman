@@ -42,5 +42,11 @@ public interface Controllable {
 	/**
 	 * 
 	 */
-	public abstract void kill();
+	public abstract void die();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public abstract boolean isDead();
 }

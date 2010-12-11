@@ -1,6 +1,6 @@
 package org.bugflux.pacman;
 
-public class Coord implements Comparable<Coord> {
+public class Coord {
 	private int r, c;
 
 	public Coord(int r, int c) {
@@ -17,7 +17,8 @@ public class Coord implements Comparable<Coord> {
 	}
 
 	@Override
-	public int compareTo(Coord c) {
-		return (r() - c.r()) + (c() - c.c()); 
+	public boolean equals(Object o) {
+		Coord c = (Coord)o;
+		return r() == c.r() && c() == c.c(); 
 	}
 }

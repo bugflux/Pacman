@@ -1,24 +1,19 @@
 package org.bugflux.pacman.monitor;
 
 import org.bugflux.pacman.Coord;
-import org.bugflux.pacman.PositionToggler;
 import org.bugflux.pacman.entities.MorphingWalkable;
+import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.Walkable.PositionType;
 
-public class MonitorPositionToggler extends PositionToggler {
-
+public class MonitorPositionToggler implements Toggler {
+	protected final MorphingWalkable w; 
+	
 	public MonitorPositionToggler(MorphingWalkable w) {
-		super(w);
+		this.w = w;
 	}
 
 	@Override
 	public synchronized PositionType tryToggle(Coord c) {
-		synchronized(w) {
-			if(w.canToggle(c)) {
-				return w.tryTogglePositionType(c);
-			}
-
-			return w.positionType(c);
-		}
+		return w.tryTogglePositionType(c);
 	}
 }

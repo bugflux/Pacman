@@ -1,19 +1,20 @@
 package org.bugflux.pacman.input;
 
-import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import org.bugflux.pacman.Coord;
-import org.bugflux.pacman.PositionToggler;
+import org.bugflux.pacman.entities.Toggler;
+
+import pt.ua.gboard.GBoard;
 
 public class MousePositionToggler implements MouseListener {
-	protected final PositionToggler t;
-	protected final Component c;
+	protected final Toggler t;
+	protected final GBoard g;
 	
-	public MousePositionToggler(PositionToggler t, Component c) {
+	public MousePositionToggler(Toggler t, GBoard g) {
 		this.t = t;
-		this.c = c;
+		this.g = g;
 	}
 	
 	@Override
@@ -25,8 +26,8 @@ public class MousePositionToggler implements MouseListener {
 	public void mousePressed(MouseEvent e) {
 		t.tryToggle(
 				new Coord(
-						t.height() * e.getY() / (int)(c.getHeight()),
-						t.width() * e.getX() / (int)(c.getWidth())
+						g.numberOfLines() * e.getY() / (int)(g.getHeight()),
+						g.numberOfColumns() * e.getX() / (int)(g.getWidth())
 						)
 				);
 	}

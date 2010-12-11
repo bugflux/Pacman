@@ -23,13 +23,16 @@ public class Map implements Garden, MorphingWalkable {
 	protected final int walkersMap[][];
 	protected int remainingBeans;
 
-	protected final ArrayList<Controllable> walkers;
+	protected final ArrayList<Controllable> goodWalkers;
+	protected final ArrayList<Controllable> villainWalkers;
 
 	protected final GBoard screen;
-	protected final int numLayers = 3;
 	protected final int mapLayer = 0;
-	protected final int beanLayer = mapLayer + 1;
+	protected final int graveYardLayer = mapLayer + 1;
+	protected final int beanLayer = graveYardLayer + 1;
 	protected final int walkerLayer = beanLayer + 1;
+
+	protected final int numLayers = walkerLayer + 1;
 
 	protected final int wallGelemId;
 	protected final int backgroundGelemId;
@@ -50,7 +53,8 @@ public class Map implements Garden, MorphingWalkable {
 		walkersMap = new int[height()][width()];
 		beanMap = new int[height()][width()];
 
-		walkers = new ArrayList<Controllable>();
+		goodWalkers = new ArrayList<Controllable>();
+		villainWalkers = new ArrayList<Controllable>();
 
 		// declare and initialize the screen
 		// the first layer is for the map (walls, halls, doors),r
@@ -99,13 +103,29 @@ public class Map implements Garden, MorphingWalkable {
 
 		walkersMap[c.r()][c.c()] = screen.registerGelem(w.gelem());
 		screen.draw(walkersMap[c.r()][c.c()], c.r(), c.c(), walkerLayer);
-		walkers.add(w);
+		
+		if(w.team() == Team.GOOD) {
+			goodWalkers.add(w);
+		}
+		else {
+			villainWalkers.add(w);
+		}
 	}
 
 	@Override
 	public Coord tryMove(Controllable w, Direction d) {
-		assert walkers.contains(w);
+		if(w.team() == Team.GOOD) {
+			assert goodWalkers.contains(w);
+		}
+		else {
+			assert villainWalkers.contains(w);
+		}
+		
 		Coord oldC = w.getCoord();
+		if(w.isDead()) {
+			return oldC;
+		}
+
 		Coord c = newCoord(oldC, d);
 
 		if(!validPosition(c) || !isHall(c)) {
@@ -117,10 +137,11 @@ public class Map implements Garden, MorphingWalkable {
 				Collector collector = (Collector)w;
 				if(collector.looseEnergy(1) <= 0) {
 					System.err.println("died");
-					w.kill();
-					// TODO kill him
+					killWalker(collector);
+
+					return oldC;
 				}
-				
+
 				if(hasBean(c)) {
 					removeBean(c);
 					collector.gainEnergy(10);
@@ -146,11 +167,12 @@ public class Map implements Garden, MorphingWalkable {
 			Controllable contr = getControllable(c);
 			if(contr.team() != w.team()) {
 				// the good one dies.
+				System.err.println("collision");
 				if(w.team() == Team.GOOD) {
-					w.kill();
+					killWalker(w);
 				}
 				else {
-					contr.kill();
+					killWalker(contr);
 				}
 			}
 
@@ -158,25 +180,50 @@ public class Map implements Garden, MorphingWalkable {
 		}
 	}
 	
+	private void killWalker(Controllable w) {
+		Coord c = w.getCoord();
+		w.die();
+		
+		screen.erase(walkersMap[c.r()][c.c()], c.r(), c.c(), walkerLayer);
+		walkersMap[c.r()][c.c()] = 0;
+		screen.draw(screen.registerGelem(w.gelem()), c.r(), c.c(), graveYardLayer);
+		
+		if(w.team() == Team.GOOD) {
+			goodWalkers.remove(w);
+		}
+		else {
+			villainWalkers.remove(w);
+		}
+	}
+	
 	// called only when there is a controllable in c!!
 	private Controllable getControllable(Coord c) {
 		assert !isFree(c);
 
-		Iterator<Controllable> iter = walkers.iterator();
+		Iterator<Controllable> iter = goodWalkers.iterator();
 		Controllable contr;
 		while(iter.hasNext()) {
 			contr = iter.next();
-			if(contr.getCoord().compareTo(c) == 0) {
+			if(contr.getCoord().equals(c)) {
 				return contr;
 			}
 		}
 		
+		iter = villainWalkers.iterator();
+		while(iter.hasNext()) {
+			contr = iter.next();
+			if(contr.getCoord().equals(c)) {
+				return contr;
+			}
+		}
+		
+		assert false;
 		return null;
 	}
 
 	@Override
 	public int tryCollect(Collector w) {
-		assert walkers.contains(w);
+		assert goodWalkers.contains(w);
 		Coord c = w.getCoord();
 		
 		if(hasBean(c)) {

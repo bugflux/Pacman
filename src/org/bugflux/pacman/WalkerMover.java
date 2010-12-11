@@ -12,7 +12,14 @@ public class WalkerMover implements Mover {
 		this.w = w;
 	}
 	
-	public Coord tryMove(Direction d) {	
-		return w.tryMove(d);
+	public Coord tryMove(Direction d) {
+		synchronized(w) {
+			if(w.canMove(d)) {
+				return w.tryMove(d);
+			}
+			else {
+				return null;
+			}
+		}
 	}
 }

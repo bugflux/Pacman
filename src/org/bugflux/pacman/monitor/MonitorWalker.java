@@ -9,7 +9,13 @@ import pt.ua.gboard.Gelem;
 public class MonitorWalker implements Controllable {
 	protected final Controllable w;
 	
+	/**
+	 * The controller must be using a SharedMap!!
+	 * @param w
+	 */
 	public MonitorWalker(Controllable w) {
+		assert w != null;
+		
 		this.w = w;
 	}
 
@@ -29,17 +35,23 @@ public class MonitorWalker implements Controllable {
 	}
 
 	@Override
-	public Gelem gelem() {
+	public synchronized Gelem gelem() {
 		return w.gelem();
 	}
 
+
 	@Override
-	public void kill() {
-		w.kill();
+	public synchronized Team team() {
+		return w.team();
 	}
 
 	@Override
-	public Team team() {
-		return w.team();
+	public synchronized void die() {
+		w.die();
+	}
+
+	@Override
+	public synchronized boolean isDead() {
+		return w.isDead();
 	}
 }
