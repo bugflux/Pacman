@@ -9,9 +9,11 @@ import org.bugflux.pacman.entities.Walkable.Direction;
 
 public class RandomMover extends Thread {
 	protected final Mover m;
+	protected int ms;
 	
-	public RandomMover(Mover m) {
+	public RandomMover(Mover m, int ms) {
 		this.m = m;
+		this.ms = ms;
 	}
 	
 	public void run() {
@@ -36,11 +38,13 @@ public class RandomMover extends Thread {
 			previousC = currentC;
 			currentC = m.tryMove(currentD);
 
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				throw new UncheckedInterruptedException(e);
-			} // TODO remove
+			if(ms > 0) {
+				try {
+					Thread.sleep(ms);
+				} catch (InterruptedException e) {
+					throw new UncheckedInterruptedException(e);
+				} // TODO don't sleep!
+			}
 		}
 	}
 }

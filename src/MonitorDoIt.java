@@ -32,16 +32,16 @@ public class MonitorDoIt {
 		_map.getGBoard().addKeyListener(controller);
 		
 		Controllable pinky = new MonitorWalker(new Phantom(map, new Coord(7, 10), _map.getGBoard(), Guy.Pinky));
-		RandomMover controller2 = new RandomMover(new MonitorWalkerMover(new WalkerMover(pinky)));
+		RandomMover controller2 = new RandomMover(new MonitorWalkerMover(new WalkerMover(pinky)), 87);
 		
 		Controllable blinky = new MonitorWalker(new Phantom(map, new Coord(7, 11), _map.getGBoard(), Guy.Blinky));
-		RandomMover controller3 = new RandomMover(new MonitorWalkerMover(new WalkerMover(blinky)));
+		RandomMover controller3 = new RandomMover(new MonitorWalkerMover(new WalkerMover(blinky)), 175);
 		
 		Controllable inky = new MonitorWalker(new Phantom(map, new Coord(7, 12), _map.getGBoard(), Guy.Inky));
-		RandomMover controller4 = new RandomMover(new MonitorWalkerMover(new WalkerMover(inky)));
+		RandomMover controller4 = new RandomMover(new MonitorWalkerMover(new WalkerMover(inky)), 250);
 		
 		Controllable clyde = new MonitorWalker(new Phantom(map, new Coord(7, 13), _map.getGBoard(), Guy.Clyde));
-		RandomMover controller5 = new RandomMover(new MonitorWalkerMover(new WalkerMover(clyde)));
+		RandomMover controller5 = new RandomMover(new MonitorWalkerMover(new WalkerMover(clyde)), 500);
 		
 		controller2.start();
 		controller3.start();

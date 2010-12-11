@@ -10,10 +10,12 @@ public class Walker implements Controllable {
 	protected final Gelem gelem;
 	protected final Walkable w;
 	protected Coord c;
+	protected Team team; // can change teams!
 
-	public Walker(Walkable w, Coord c, Gelem g) {
+	public Walker(Walkable w, Coord c, Gelem g, Team t) {
 		assert w != null && c != null;
 
+		this.team = t;
 		this.w = w;
 		this.c = c;
 		this.gelem = g;
@@ -44,5 +46,10 @@ public class Walker implements Controllable {
 	@Override
 	public void kill() {
 		System.err.println("killed!");
+	}
+
+	@Override
+	public Team team() {
+		return team;
 	}
 }

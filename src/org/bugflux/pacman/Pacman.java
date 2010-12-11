@@ -9,7 +9,7 @@ public class Pacman extends Walker implements Collector {
 	protected int energy;
 
 	public Pacman(Walkable w, Coord c) {
-		super(w, c, new _PacmanGelem());
+		super(w, c, new _PacmanGelem(), Team.GOOD);
 		energy = 10;
 	}
 

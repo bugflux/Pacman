@@ -6,6 +6,14 @@ import org.bugflux.pacman.entities.Walkable.Direction;
 import pt.ua.gboard.Gelem;
 
 public interface Controllable {
+	public static enum Team { GOOD, VILLAIN };
+
+	/**
+	 * 
+	 * @return
+	 */
+	public abstract Team team();
+	
 	/**
 	 * 
 	 * @return

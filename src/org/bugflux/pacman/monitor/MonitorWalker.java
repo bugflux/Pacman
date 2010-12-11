@@ -37,4 +37,9 @@ public class MonitorWalker implements Controllable {
 	public void kill() {
 		w.kill();
 	}
+
+	@Override
+	public Team team() {
+		return w.team();
+	}
 }

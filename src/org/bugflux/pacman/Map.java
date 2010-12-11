@@ -1,11 +1,12 @@
 package org.bugflux.pacman;
 
 import java.awt.Color;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
+import org.bugflux.pacman.entities.Controllable.Team;
 import org.bugflux.pacman.entities.Garden;
 import org.bugflux.pacman.entities.MorphingWalkable;
 
@@ -22,7 +23,7 @@ public class Map implements Garden, MorphingWalkable {
 	protected final int walkersMap[][];
 	protected int remainingBeans;
 
-	protected final Set<Controllable> walkers;
+	protected final ArrayList<Controllable> walkers;
 
 	protected final GBoard screen;
 	protected final int numLayers = 3;
@@ -49,7 +50,7 @@ public class Map implements Garden, MorphingWalkable {
 		walkersMap = new int[height()][width()];
 		beanMap = new int[height()][width()];
 
-		walkers = new HashSet<Controllable>();
+		walkers = new ArrayList<Controllable>();
 
 		// declare and initialize the screen
 		// the first layer is for the map (walls, halls, doors),r
@@ -137,16 +138,42 @@ public class Map implements Garden, MorphingWalkable {
 			screen.move(walkersMap[oldC.r()][oldC.c()], oldC.r(), oldC.c(), walkerLayer, c.r(), c.c(), walkerLayer);
 			walkersMap[c.r()][c.c()] = walkersMap[oldC.r()][oldC.c()];
 			walkersMap[oldC.r()][oldC.c()] = 0;
-			
+
 			return c;
 		}
 		else { // collision!
-			// TODO kill him, but only if it's from a different team!
-			w.kill();
+			// TODO kill must actually kill
+			Controllable contr = getControllable(c);
+			if(contr.team() != w.team()) {
+				// the good one dies.
+				if(w.team() == Team.GOOD) {
+					w.kill();
+				}
+				else {
+					contr.kill();
+				}
+			}
+
 			return oldC;
 		}
 	}
 	
+	// called only when there is a controllable in c!!
+	private Controllable getControllable(Coord c) {
+		assert !isFree(c);
+
+		Iterator<Controllable> iter = walkers.iterator();
+		Controllable contr;
+		while(iter.hasNext()) {
+			contr = iter.next();
+			if(contr.getCoord().compareTo(c) == 0) {
+				return contr;
+			}
+		}
+		
+		return null;
+	}
+
 	@Override
 	public int tryCollect(Collector w) {
 		assert walkers.contains(w);

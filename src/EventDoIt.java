@@ -32,7 +32,7 @@ public class EventDoIt {
 		Controllable pacman2 = new Pacman(map, new Coord(1, 2));
 		EventWalkerMover mover2 = new EventWalkerMover(new WalkerMover(pacman2));
 		mover2.start();
-		RandomMover controller2 = new RandomMover(mover2);
+		RandomMover controller2 = new RandomMover(mover2, 200);
 		controller2.start();
 
 //		MousePositionToggler toggler = new MousePositionToggler(new EventPositionToggler(map), _map.getGBoard());

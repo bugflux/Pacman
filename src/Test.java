@@ -30,7 +30,7 @@ class Parent implements ParentInterface {
 	}
 }
 
-class Child implements ChildInterface {
+class Child extends Parent implements ChildInterface {
 	@Override
 	public String toStringChild() {
 		return "child";
