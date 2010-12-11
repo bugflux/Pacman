@@ -30,3 +30,10 @@ As portas seguem a mesma lógica.
 É necessário implementar o movimento e os eventos do teclado sob a forma de
 eventos consumidos, pois o GBoard faz buffering dos keypresses e depois
 processa todos de uma vez.
+
+//////
+11 Dez
+É preciso ver:
+- RandomMover não deve trabalhar com sleep. Ou, pelo menos, deve ser passado um argumento.
+- Como matar os Walkers e parar o jogo.
+- Como implementar correctamente o overload dos Collectors.
