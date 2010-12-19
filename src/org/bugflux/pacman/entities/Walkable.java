@@ -13,7 +13,7 @@ public interface Walkable {
 	 * @return the new Coordinates of the walker.
 	 */
 	public abstract Coord tryMove(Controllable w, Direction d);
-	
+
 	/**
 	 * Add a Walker to a specified row,column coordinate.
 	 * 
@@ -22,6 +22,14 @@ public interface Walkable {
 	 * @param c The column index.
 	 */
 	public abstract void addWalker(Controllable w, Coord c);
+
+	/**
+	 * Retrieve the given walker's position in the map. 
+	 * 
+	 * @param w The walker to know the position from. 
+	 * @return Its valid coordinates.
+	 */
+	public abstract Coord position(Controllable w);
 
 	/**
 	 * Checks if a given position is valid for this walkable space.

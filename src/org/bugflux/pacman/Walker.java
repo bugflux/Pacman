@@ -8,7 +8,6 @@ import pt.ua.gboard.Gelem;
 
 public class Walker implements Controllable {
 	protected final Walkable w;
-	protected Coord c;
 	protected Team team; // can change teams!
 	protected boolean dead;
 	protected Gelem gelem;
@@ -17,23 +16,28 @@ public class Walker implements Controllable {
 		assert w != null;
 		assert c != null;
 		assert t != null;
-
+		
 		this.team = t;
 		this.w = w;
-		this.c = c;
 		this.gelem = g;
-		this.w.addWalker(this, this.c);
 		dead = false;
+		
+		if(w.isFree(c) && w.isHall(c)) {
+			w.addWalker(this, c);
+		}
+		else {
+			assert false;
+		}
 	}
 
 	@Override
 	public Coord getCoord() {
-		return c;
+		return w.position(this);
 	}
 
 	@Override
 	public Coord tryMove(Direction d) {
-		return c = w.tryMove(this, d);
+		return w.tryMove(this, d);
 	}
 	
 	@Override
@@ -47,7 +51,7 @@ public class Walker implements Controllable {
 			return false;
 		}
 
-		Coord c = w.newCoord(this.c, d);
+		Coord c = w.newCoord(getCoord(), d);
 		return w.validPosition(c) && w.isHall(c);
 	}
 

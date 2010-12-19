@@ -1,14 +1,13 @@
 package org.bugflux.pacman.monitor;
 
 import org.bugflux.pacman.Coord;
-import org.bugflux.pacman.Map;
-import org.bugflux.pacman.entities.MorphingWalkable;
 import org.bugflux.pacman.entities.Controllable;
+import org.bugflux.pacman.entities.MorphingWalkable;
 
-public class MonitorMap extends Thread implements MorphingWalkable {
-	protected final Map m;
+public class MonitorWalkable extends Thread implements MorphingWalkable {
+	protected final MorphingWalkable m;
 
-	public MonitorMap(Map m) {
+	public MonitorWalkable(MorphingWalkable m) {
 		this.m = m;
 	}
 
@@ -20,6 +19,11 @@ public class MonitorMap extends Thread implements MorphingWalkable {
 	@Override
 	public void addWalker(Controllable w, Coord c) {
 		m.addWalker(w, c);
+	}
+	
+	@Override
+	public synchronized Coord position(Controllable c) {
+		return m.position(c);
 	}
 
 	@Override

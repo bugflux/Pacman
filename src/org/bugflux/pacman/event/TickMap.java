@@ -24,8 +24,8 @@ public class TickMap implements MorphingWalkable {
 	public Coord tryMove(Controllable c, Direction d) {
 		mutex.lock();
 		Coord r = w.tryMove(c, d);
-		tick.await();
 		mutex.unlock();
+		tick.await();
 		return r;
 	}
 
@@ -35,13 +35,22 @@ public class TickMap implements MorphingWalkable {
 		w.addWalker(co, c);
 		mutex.unlock();
 	}
+	
+	@Override
+	public Coord position(Controllable c) {
+		mutex.lock();
+		Coord result = w.position(c);
+		mutex.unlock();
+		
+		return result;
+	}
 
 	@Override
 	public PositionType tryTogglePositionType(Coord c) {
 		mutex.lock();
 		PositionType r = w.tryTogglePositionType(c);
-		tick.await();
 		mutex.unlock();
+		tick.await();
 
 		return r;
 	}

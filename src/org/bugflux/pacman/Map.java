@@ -1,8 +1,8 @@
 package org.bugflux.pacman;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
@@ -23,8 +23,7 @@ public class Map implements Garden, MorphingWalkable {
 	protected final int walkersMap[][];
 	protected int remainingBeans;
 
-	protected final ArrayList<Controllable> goodWalkers;
-	protected final ArrayList<Controllable> villainWalkers;
+	protected final HashMap<Controllable, Coord> walkers;
 
 	protected final GBoard screen;
 	protected final int mapLayer = 0;
@@ -53,8 +52,7 @@ public class Map implements Garden, MorphingWalkable {
 		walkersMap = new int[height()][width()];
 		beanMap = new int[height()][width()];
 
-		goodWalkers = new ArrayList<Controllable>();
-		villainWalkers = new ArrayList<Controllable>();
+		walkers = new HashMap<Controllable, Coord>();
 
 		// declare and initialize the screen
 		// the first layer is for the map (walls, halls, doors),r
@@ -95,6 +93,7 @@ public class Map implements Garden, MorphingWalkable {
 
 	@Override
 	public void addWalker(Controllable w, Coord c) {
+		assert !walkers.containsKey(w);
 		assert isHall(c) && isFree(c);
 
 		if(hasBean(c)) {
@@ -104,52 +103,37 @@ public class Map implements Garden, MorphingWalkable {
 		walkersMap[c.r()][c.c()] = screen.registerGelem(w.gelem());
 		screen.draw(walkersMap[c.r()][c.c()], c.r(), c.c(), walkerLayer);
 		
-		if(w.team() == Team.GOOD) {
-			goodWalkers.add(w);
-		}
-		else {
-			villainWalkers.add(w);
-		}
+		walkers.put(w, c);
+	}
+	
+	@Override
+	public Coord position(Controllable w) {
+		assert walkers.containsKey(w);
+		return walkers.get(w);
 	}
 
 	@Override
 	public Coord tryMove(Controllable w, Direction d) {
-		if(w.team() == Team.GOOD) {
-			assert goodWalkers.contains(w);
-		}
-		else {
-			assert villainWalkers.contains(w);
-		}
+		assert walkers.containsKey(w);
+		assert !w.isDead();
 		
-		Coord oldC = w.getCoord();
-		if(w.isDead()) {
-			return oldC;
-		}
-
+		Coord oldC = walkers.get(w); //w.getCoord();
 		Coord c = newCoord(oldC, d);
 
-		if(!validPosition(c) || !isHall(c)) {
-			return oldC;
-		}
+		assert validPosition(c) && isHall(c);
 		
 		if(isFree(c)) {
 			try {
 				Collector collector = (Collector)w;
+
 				if(collector.looseEnergy(1) <= 0) {
 					System.err.println("died");
 					killWalker(collector);
 
 					return oldC;
 				}
-
-				if(hasBean(c)) {
-					removeBean(c);
-					collector.gainEnergy(10);
-					
-					if(remainingBeans() == 0) {
-						// TODO finish
-					}
-				}
+				
+				tryCollect(collector);
 			}
 			catch(ClassCastException e) {
 				//System.err.println("unable to cast!");
@@ -159,6 +143,7 @@ public class Map implements Garden, MorphingWalkable {
 			screen.move(walkersMap[oldC.r()][oldC.c()], oldC.r(), oldC.c(), walkerLayer, c.r(), c.c(), walkerLayer);
 			walkersMap[c.r()][c.c()] = walkersMap[oldC.r()][oldC.c()];
 			walkersMap[oldC.r()][oldC.c()] = 0;
+			walkers.put(w, c);
 
 			return c;
 		}
@@ -181,39 +166,26 @@ public class Map implements Garden, MorphingWalkable {
 	}
 	
 	private void killWalker(Controllable w) {
-		Coord c = w.getCoord();
+		assert walkers.containsKey(w);
+		assert !w.isDead();
+
+		Coord c = walkers.get(w);
 		w.die();
 		
 		screen.erase(walkersMap[c.r()][c.c()], c.r(), c.c(), walkerLayer);
 		walkersMap[c.r()][c.c()] = 0;
 		screen.draw(screen.registerGelem(w.gelem()), c.r(), c.c(), graveYardLayer);
 		
-		if(w.team() == Team.GOOD) {
-			goodWalkers.remove(w);
-		}
-		else {
-			villainWalkers.remove(w);
-		}
+		walkers.remove(w);
 	}
-	
-	// called only when there is a controllable in c!!
+
 	private Controllable getControllable(Coord c) {
+		assert walkers.containsValue(c);
 		assert !isFree(c);
 
-		Iterator<Controllable> iter = goodWalkers.iterator();
-		Controllable contr;
-		while(iter.hasNext()) {
-			contr = iter.next();
-			if(contr.getCoord().equals(c)) {
-				return contr;
-			}
-		}
-		
-		iter = villainWalkers.iterator();
-		while(iter.hasNext()) {
-			contr = iter.next();
-			if(contr.getCoord().equals(c)) {
-				return contr;
+		for(Entry<Controllable, Coord> x : walkers.entrySet()) {
+			if(x.getValue().equals(c)) {
+				return x.getKey();
 			}
 		}
 		
@@ -223,12 +195,12 @@ public class Map implements Garden, MorphingWalkable {
 
 	@Override
 	public int tryCollect(Collector w) {
-		assert goodWalkers.contains(w);
+		assert walkers.containsKey(w);
+		assert !w.isDead();
+
 		Coord c = w.getCoord();
-		
 		if(hasBean(c)) {
-			removeBean(c);
-			return 10;
+			w.gainEnergy(10);
 		}
 		
 		return 0;

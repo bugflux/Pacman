@@ -6,20 +6,18 @@ import org.bugflux.pacman.entities.Controllable;
 
 
 public class WalkerMover implements Mover {
-	protected Controllable w;
+	protected final Controllable c;
 
-	public WalkerMover(Controllable w) {
-		this.w = w;
+	public WalkerMover(Controllable c) {
+		this.c = c;
 	}
 	
 	public Coord tryMove(Direction d) {
-		synchronized(w) {
-			if(w.canMove(d)) {
-				return w.tryMove(d);
-			}
-			else {
-				return null;
-			}
+		if(c.canMove(d)) {
+			return c.tryMove(d);
+		}
+		else {
+			return null;
 		}
 	}
 }

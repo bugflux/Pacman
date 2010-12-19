@@ -5,14 +5,15 @@ import org.bugflux.pacman.Map;
 import org.bugflux.pacman.Pacman;
 import org.bugflux.pacman.Phantom;
 import org.bugflux.pacman.Phantom.Guy;
+import org.bugflux.pacman.PositionToggler;
 import org.bugflux.pacman.WalkerMover;
 import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.MorphingWalkable;
 import org.bugflux.pacman.input.KeyboardMover;
 import org.bugflux.pacman.input.MousePositionToggler;
 import org.bugflux.pacman.input.RandomMover;
-import org.bugflux.pacman.monitor.MonitorMap;
 import org.bugflux.pacman.monitor.MonitorPositionToggler;
+import org.bugflux.pacman.monitor.MonitorWalkable;
 import org.bugflux.pacman.monitor.MonitorWalker;
 import org.bugflux.pacman.monitor.MonitorWalkerMover;
 
@@ -25,7 +26,7 @@ public class MonitorDoIt {
 		}
 
 		Map _map = new Map(SequentialDoIt.readLabyrinth(args[0]));
-		MorphingWalkable map = new MonitorMap(_map);
+		MorphingWalkable map = new MonitorWalkable(_map);
 
 		Controllable pacman = new MonitorWalker(new Pacman(map, new Coord(1, 1)));
 		KeyboardMover controller = new KeyboardMover(new MonitorWalkerMover(new WalkerMover(pacman)));
@@ -48,7 +49,7 @@ public class MonitorDoIt {
 		controller4.start();
 		controller5.start();
 
-		MousePositionToggler toggler = new MousePositionToggler(new MonitorPositionToggler(map), _map.getGBoard());
+		MousePositionToggler toggler = new MousePositionToggler(new MonitorPositionToggler(new PositionToggler(map)), _map.getGBoard());
 		_map.getGBoard().addMouseListener(toggler);
 	}
 }

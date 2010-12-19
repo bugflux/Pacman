@@ -37,3 +37,7 @@ processa todos de uma vez.
 - RandomMover não deve trabalhar com sleep. Ou, pelo menos, deve ser passado um argumento.
 - Como matar os Walkers e parar o jogo.
 - Como implementar correctamente o overload dos Collectors.
+
+/////
+O modo assincrono consegue-se se a informação dos walkers (Coord) estiver
+guardada no mapa, e não em cada um!!
