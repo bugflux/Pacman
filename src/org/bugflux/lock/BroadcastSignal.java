@@ -10,17 +10,4 @@ public class BroadcastSignal extends Signal {
 		arrived = true;
 		notifyAll();
 	}
-
-	@Override
-	public synchronized void await() {
-		try {
-			while(!arrived) {
-				wait();
-			}
-			arrived = false;
-		}
-		catch(InterruptedException e) {
-			throw new UncheckedInterruptedException(e);
-		}
-	}
 }

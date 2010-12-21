@@ -8,7 +8,7 @@ import org.bugflux.pacman.Phantom.Guy;
 import org.bugflux.pacman.PositionToggler;
 import org.bugflux.pacman.WalkerMover;
 import org.bugflux.pacman.entities.Controllable;
-import org.bugflux.pacman.entities.MorphingWalkable;
+import org.bugflux.pacman.entities.World;
 import org.bugflux.pacman.input.KeyboardMover;
 import org.bugflux.pacman.input.MousePositionToggler;
 import org.bugflux.pacman.input.RandomMover;
@@ -26,7 +26,7 @@ public class MonitorDoIt {
 		}
 
 		Map _map = new Map(SequentialDoIt.readLabyrinth(args[0]));
-		MorphingWalkable map = new MonitorWalkable(_map);
+		World map = new MonitorWalkable(_map);
 
 		Controllable pacman = new MonitorWalker(new Pacman(map, new Coord(1, 1)));
 		KeyboardMover controller = new KeyboardMover(new MonitorWalkerMover(new WalkerMover(pacman)));

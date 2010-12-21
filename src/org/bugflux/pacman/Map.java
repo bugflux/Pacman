@@ -7,14 +7,13 @@ import java.util.Map.Entry;
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.Controllable.Team;
-import org.bugflux.pacman.entities.Garden;
-import org.bugflux.pacman.entities.MorphingWalkable;
+import org.bugflux.pacman.entities.World;
 
 import pt.ua.gboard.CharGelem;
 import pt.ua.gboard.FilledGelem;
 import pt.ua.gboard.GBoard;
 
-public class Map implements Garden, MorphingWalkable {
+public class Map implements World {
 	protected final PositionType map[][];
 
 	// most of this maps are used for faster testing

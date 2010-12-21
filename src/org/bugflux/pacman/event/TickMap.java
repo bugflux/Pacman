@@ -5,16 +5,17 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.bugflux.lock.Metronome;
 import org.bugflux.pacman.Coord;
+import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
-import org.bugflux.pacman.entities.MorphingWalkable;
+import org.bugflux.pacman.entities.World;
 
 
-public class TickMap implements MorphingWalkable {
-	protected final MorphingWalkable w;
+public class TickMap implements World {
+	protected final World w;
 	protected final Metronome tick;
 	protected Lock mutex;
 
-	public TickMap(MorphingWalkable w, Metronome tick) {
+	public TickMap(World w, Metronome tick) {
 		mutex = new ReentrantLock();
 		this.w = w;
 		this.tick = tick;
@@ -26,6 +27,7 @@ public class TickMap implements MorphingWalkable {
 		Coord r = w.tryMove(c, d);
 		mutex.unlock();
 		tick.await();
+
 		return r;
 	}
 
@@ -109,5 +111,23 @@ public class TickMap implements MorphingWalkable {
 	@Override
 	public int width() {
 		return w.width();
+	}
+
+	@Override
+	public int tryCollect(Collector c) {
+		mutex.lock();
+		int result = w.tryCollect(c);
+		mutex.unlock();
+
+		return result;
+	}
+
+	@Override
+	public boolean hasCollectable(Coord c) {
+		mutex.lock();
+		boolean result = w.hasCollectable(c);
+		mutex.unlock();
+		
+		return result;
 	}
 }

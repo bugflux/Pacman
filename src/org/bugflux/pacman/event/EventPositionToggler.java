@@ -17,8 +17,11 @@ public class EventPositionToggler extends Thread implements Toggler {
 	
 	public void run() {
 		while(true) {
+System.err.println("wait: toggling");
 			s.await();
+System.err.println("toggling");
 			t.tryToggle(c);
+System.err.println("toggled");
 		}
 	}
 

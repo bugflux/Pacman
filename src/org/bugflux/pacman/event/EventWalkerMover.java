@@ -19,8 +19,11 @@ public class EventWalkerMover extends Thread implements Mover {
 	
 	public void run() {
 		while(true) {
+System.err.println("wait: moving");
 			s.await();
+System.err.println("moving");
 			m.tryMove(d);
+System.err.println("moved");
 		}
 	}
 

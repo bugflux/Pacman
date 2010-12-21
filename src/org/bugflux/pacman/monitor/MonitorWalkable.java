@@ -1,13 +1,14 @@
 package org.bugflux.pacman.monitor;
 
 import org.bugflux.pacman.Coord;
+import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
-import org.bugflux.pacman.entities.MorphingWalkable;
+import org.bugflux.pacman.entities.World;
 
-public class MonitorWalkable extends Thread implements MorphingWalkable {
-	protected final MorphingWalkable m;
+public class MonitorWalkable extends Thread implements World {
+	protected final World m;
 
-	public MonitorWalkable(MorphingWalkable m) {
+	public MonitorWalkable(World m) {
 		this.m = m;
 	}
 
@@ -70,5 +71,15 @@ public class MonitorWalkable extends Thread implements MorphingWalkable {
 	@Override
 	public synchronized boolean canToggle(Coord c) {
 		return m.canToggle(c);
+	}
+
+	@Override
+	public synchronized int tryCollect(Collector c) {
+		return m.tryCollect(c);
+	}
+
+	@Override
+	public synchronized boolean hasCollectable(Coord c) {
+		return m.hasCollectable(c);
 	}
 }
