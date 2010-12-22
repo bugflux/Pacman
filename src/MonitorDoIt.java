@@ -10,6 +10,7 @@ import org.bugflux.pacman.WalkerMover;
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.World;
+import org.bugflux.pacman.input.AutomaticDoorman;
 import org.bugflux.pacman.input.KeyboardMover;
 import org.bugflux.pacman.input.MousePositionToggler;
 import org.bugflux.pacman.input.RandomMover;
@@ -59,6 +60,9 @@ public class MonitorDoIt {
 		controller3.start();
 		controller4.start();
 		controller5.start();
+		
+		AutomaticDoorman phantomDoor= new AutomaticDoorman(map, new Coord(6, 10), 3000, 2000);
+		phantomDoor.start();
 
 		MousePositionToggler toggler = new MousePositionToggler(new MonitorPositionToggler(new PositionToggler(map)), _map.getGBoard());
 		_map.getGBoard().addMouseListener(toggler);

@@ -180,7 +180,6 @@ public class Map implements World {
 			Controllable contr = getControllable(c);
 			if(contr.team() != w.team()) {
 				// the good one dies.
-				System.err.println("collision");
 				if(w.team() == Team.GOOD) {
 					w.die();
 					killWalker(w);
@@ -229,7 +228,7 @@ public class Map implements World {
 
 		Coord c = walkers.get(w);
 		if(hasBean(c)) {
-			w.gainEnergy(10);
+			w.gainEnergy(3);
 			removeBean(c);
 		}
 	}
