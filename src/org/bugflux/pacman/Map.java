@@ -43,6 +43,7 @@ public class Map implements World {
 	protected int scoreBeanId;
 	
 	protected final List<Toggler> togglers;
+	protected boolean isOver;
 
 	/**
 	 * .
@@ -64,6 +65,7 @@ public class Map implements World {
 		walkers = new HashMap<Controllable, Coord>();
 		scoreWalkersId = new HashMap<Collector, Integer>();
 		togglers = new ArrayList<Toggler>();
+		isOver = false;
 
 		// declare and initialize the screen
 		// the first layer is for the map (walls, halls, doors),r
@@ -107,6 +109,7 @@ public class Map implements World {
 
 	@Override
 	public void addPositionToggler(Toggler t) {
+		assert !isOver();
 		assert t != null;
 		assert !togglers.contains(t);
 
@@ -115,6 +118,7 @@ public class Map implements World {
 
  	@Override
 	public void addWalker(Collector w, Coord c) {
+ 		assert !isOver();
 		internalAddWalker(w, c);
 		
 		scoreWalkersId.put(w, scoreboard.addCounter(w.gelem(), w.energy()));
@@ -122,6 +126,7 @@ public class Map implements World {
 
 	@Override
 	public void addWalker(Controllable w, Coord c) {
+		assert !isOver();
 		internalAddWalker(w, c);
 	}
 	
@@ -141,17 +146,20 @@ public class Map implements World {
 	
 	@Override
 	public Coord position(Controllable w) {
+		assert !isOver();
 		assert walkers.containsKey(w);
 		return walkers.get(w);
 	}
 
 	@Override
 	public Coord tryMove(Collector w, Direction d) {
+		assert !isOver();
 		return internalTryMove(w, d, true);
 	}
 
 	@Override
 	public Coord tryMove(Controllable w, Direction d) {
+		assert !isOver();
 		return internalTryMove(w, d, false);
 	}
 
@@ -209,6 +217,7 @@ public class Map implements World {
 	}
 
 	private void killWalker(Controllable w) {
+		assert !isOver();
 		assert walkers.containsKey(w);
 		assert w.isDead();
 
@@ -233,6 +242,7 @@ public class Map implements World {
 	}
 
 	private Controllable getControllable(Coord c) {
+		assert !isOver();
 		assert walkers.containsValue(c);
 		assert !isFree(c);
 
@@ -248,6 +258,7 @@ public class Map implements World {
 
 	@Override
 	public void tryCollect(Collector w) {
+		assert !isOver();
 		assert walkers.containsKey(w);
 		assert !w.isDead();
 
@@ -260,11 +271,13 @@ public class Map implements World {
 
 	@Override
 	public boolean hasCollectable(Coord c) {
+		assert !isOver();
 		return hasBean(c);
 	}
 
 	@Override
 	public PositionType tryTogglePositionType(Toggler t, Coord c) {
+		assert !isOver();
 		assert validPosition(c);
 		assert togglers.contains(t);
 
@@ -288,6 +301,7 @@ public class Map implements World {
 	
 	@Override
 	public boolean canToggle(Toggler t, Coord c) {
+		assert !isOver();
 		assert togglers.contains(t);
 
 		return isFree(c) && !hasBean(c);
@@ -295,6 +309,7 @@ public class Map implements World {
 
 	@Override
 	public Coord newCoord(Coord oldC, Direction d) {
+		assert !isOver();
 		Coord c = null;
 		switch(d) {
 			case UP:    c = new Coord(oldC.r() - 1, oldC.c()); break;
@@ -309,27 +324,32 @@ public class Map implements World {
 
 	@Override
 	public boolean isHall(Coord c) {
+		assert !isOver();
 		return positionType(c) == PositionType.HALL;
 	}
 
 	@Override
 	public boolean isFree(Coord c) {
+		assert !isOver();
 		assert validPosition(c);
 
 		return walkersMap[c.r()][c.c()] == 0;
 	}
 	
 	public boolean hasBean(Coord c) {
+		assert !isOver();
 		assert validPosition(c);
 		
 		return beanMap[c.r()][c.c()] != 0;
 	}
 
 	public int remainingBeans() {
+		assert !isOver();
 		return remainingBeans;
 	}
 
 	protected void removeBean(Coord c) {
+		assert !isOver();
 		assert hasBean(c);
 		
 		screen.erase(beanMap[c.r()][c.c()], c.r(), c.c(), beanLayer);
@@ -343,17 +363,12 @@ public class Map implements World {
 	}
 	
 	protected void cleanup() {
-		for(Controllable x : walkers.keySet()) {
-			x.gameOver();
-		}
-		
-		for(Toggler t : togglers) {
-			t.gameOver();
-		}
+		isOver = true;
 	}
 	
 	@Override
 	public PositionType positionType(Coord c) {
+		assert !isOver();
 		assert validPosition(c);
 
 		return map[c.r()][c.c()];
@@ -361,26 +376,31 @@ public class Map implements World {
 
 	@Override
 	public boolean validPosition(Coord c) {
-		return validPosition(c.r(), c.c());
-	}
-	
-	public boolean validPosition(int r, int c) {
-		return r >= 0 && r < height()
-			&& c >= 0 && c < width();
+		assert !isOver();
+		return c.r() >= 0 && c.r() < height()
+				&& c.c() >= 0 && c.c() < width();
 	}
 
 	@Override
 	public int height() {
+		assert !isOver();
 		return map.length;
 	}
 
 	@Override
 	public int width() {
+		assert !isOver();
 		return map[0].length;
 	}
 	
 	public GBoard getGBoard() {
+		assert !isOver();
 		return screen;
+	}
+
+	@Override
+	public boolean isOver() {
+		return isOver;
 	}
 }
 

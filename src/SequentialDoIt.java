@@ -29,13 +29,13 @@ public class SequentialDoIt {
 
 		Collector p = new Pacman(m);
 		m.addWalker(p, new Coord(1, 1));
-		KeyboardMover pacmanController = new KeyboardMover(new WalkerMover(p));
+		KeyboardMover pacmanController = new KeyboardMover(m, new WalkerMover(p));
 		m.getGBoard().addKeyListener(pacmanController);
 		
 		Phantom pinky = new Phantom(m, m.getGBoard(), Guy.Pinky);
 		m.addWalker(pinky, new Coord(7, 12));
 
-		MousePositionToggler mpt = new MousePositionToggler(new PositionToggler(m), m.getGBoard());
+		MousePositionToggler mpt = new MousePositionToggler(m, new PositionToggler(m), m.getGBoard());
 		m.getGBoard().addMouseListener(mpt);
 	}
 

@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.bugflux.lock.UncheckedInterruptedException;
 import org.bugflux.pacman.Coord;
+import org.bugflux.pacman.entities.MorphingWalkable;
 import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.Walkable.PositionType;
 
@@ -12,6 +13,7 @@ public class AutomaticDoorman extends Thread {
 	protected final int minWaitPeriod, minToggledPeriod;
 	protected boolean toggled;
 	protected Toggler toggler;
+	protected final MorphingWalkable game;
 
 	/**
 	 * Attempts to toggle a door every [minWaitPeriod,2 * minWaitPeriod] for a period of [minToggledPeriod,2 * minToggledPeriod].
@@ -22,10 +24,13 @@ public class AutomaticDoorman extends Thread {
 	 * @param minWaitPeriod
 	 * @param minToggledPeriod
 	 */
-	public AutomaticDoorman(Toggler toggler, Coord door, int minWaitPeriod, int minToggledPeriod) {
+	public AutomaticDoorman(MorphingWalkable game, Toggler toggler, Coord door, int minWaitPeriod, int minToggledPeriod) {
 		assert door != null;
+		assert toggler != null;
+		assert game != null;
 		assert minWaitPeriod > 0 && minToggledPeriod > 0;
 		
+		this.game = game;
 		this.toggler = toggler;
 		toggled = false;
 		this.door = door;
@@ -36,8 +41,9 @@ public class AutomaticDoorman extends Thread {
 	public void run() {
 		PositionType current = null, previous = null;
 		Random rand = new Random();
+		boolean isOver = false;
 		
-		while(true) { // TODO terminate properly
+		while(!isOver) { // TODO terminate properly
 			try {
 				if(!toggled) {
 					Thread.sleep(minWaitPeriod + rand.nextInt(minWaitPeriod));
@@ -46,8 +52,12 @@ public class AutomaticDoorman extends Thread {
 					Thread.sleep(minToggledPeriod + rand.nextInt(minToggledPeriod));
 				}
 
-				previous = current;
-				current = toggler.tryToggle(door);
+				synchronized(game) {
+					if(!(isOver = game.isOver())) {
+						previous = current;
+						current = toggler.tryToggle(door);
+					}
+				}
 				if(current == previous) {
 					toggled = false;
 				}

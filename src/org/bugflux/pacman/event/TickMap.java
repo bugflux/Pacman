@@ -153,4 +153,13 @@ public class TickMap implements World {
 		
 		return result;
 	}
+
+	@Override
+	public boolean isOver() {
+		mutex.lock();
+		boolean result = w.isOver();
+		mutex.unlock();
+		
+		return result;
+	}
 }

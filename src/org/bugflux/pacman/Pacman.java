@@ -51,11 +51,6 @@ public class Pacman extends Walker implements Collector {
 		dead = true;
 		gelem = new _PacmanGelem(Color.gray);
 	}
-
-	@Override
-	public void gameOver() {
-		dead = true;
-	}
 }
 
 class _PacmanGelem extends pt.ua.games.PacmanGelem {

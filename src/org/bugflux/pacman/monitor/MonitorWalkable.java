@@ -98,4 +98,9 @@ public class MonitorWalkable extends Thread implements World {
 	public synchronized boolean hasCollectable(Coord c) {
 		return m.hasCollectable(c);
 	}
+
+	@Override
+	public synchronized boolean isOver() {
+		return m.isOver();
+	}
 }

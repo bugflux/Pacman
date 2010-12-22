@@ -32,28 +32,28 @@ public class EventDoIt {
 		map.addWalker(pacman1, new Coord(1, 1));
 		EventWalkerMover mover1 = new EventWalkerMover(new WalkerMover(pacman1));
 		mover1.start();
-		KeyboardMover controller1 = new KeyboardMover(mover1);
+		KeyboardMover controller1 = new KeyboardMover(map, mover1);
 		_map.getGBoard().addKeyListener(controller1);
 		
 		Controllable pinky = new Phantom(map, _map.getGBoard(), Guy.Pinky);
 		map.addWalker(pinky, new Coord(7, 10));
 		EventWalkerMover mover2 = new EventWalkerMover(new WalkerMover(pinky));
-		RandomMover controller2 = new RandomMover(mover2, 0);
+		RandomMover controller2 = new RandomMover(map, mover2, 0);
 		
 		Controllable blinky = new Phantom(map, _map.getGBoard(), Guy.Blinky);
 		map.addWalker(blinky, new Coord(7, 11));
 		EventWalkerMover mover3 = new EventWalkerMover(new WalkerMover(blinky));
-		RandomMover controller3 = new RandomMover(mover3, 0);
+		RandomMover controller3 = new RandomMover(map, mover3, 0);
 		
 		Controllable inky = new Phantom(map, _map.getGBoard(), Guy.Inky);
 		map.addWalker(inky, new Coord(7, 12));
 		EventWalkerMover mover4 = new EventWalkerMover(new WalkerMover(inky));
-		RandomMover controller4 = new RandomMover(mover4, 250);
+		RandomMover controller4 = new RandomMover(map, mover4, 250);
 		
 		Controllable clyde = new Phantom(map, _map.getGBoard(), Guy.Clyde);
 		map.addWalker(clyde, new Coord(7, 13));
 		EventWalkerMover mover5 = new EventWalkerMover(new WalkerMover(clyde));
-		RandomMover controller5 = new RandomMover(mover4, 500);
+		RandomMover controller5 = new RandomMover(map, mover4, 500);
 		
 		controller2.start();
 		controller3.start();
@@ -67,7 +67,7 @@ public class EventDoIt {
 
 		EventPositionToggler positionToggler = new EventPositionToggler(new PositionToggler(map));
 		positionToggler.start();
-		MousePositionToggler toggler = new MousePositionToggler(positionToggler, _map.getGBoard());
+		MousePositionToggler toggler = new MousePositionToggler(map, positionToggler, _map.getGBoard());
 		_map.getGBoard().addMouseListener(toggler);
 	}
 }

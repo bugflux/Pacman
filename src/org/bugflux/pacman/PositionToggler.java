@@ -29,9 +29,4 @@ public class PositionToggler implements Toggler {
 	public int width() {
 		return w.width();
 	}
-	
-	@Override
-	public void gameOver() {
-		over = true;
-	}
 }

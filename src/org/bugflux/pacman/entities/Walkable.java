@@ -2,7 +2,7 @@ package org.bugflux.pacman.entities;
 
 import org.bugflux.pacman.Coord;
 
-public interface Walkable {
+public interface Walkable extends Game {
 	public static enum PositionType { WALL, HALL };
 	public static enum Direction { UP, DOWN, LEFT, RIGHT };
 	

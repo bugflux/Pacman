@@ -5,13 +5,20 @@ import java.util.Random;
 import org.bugflux.lock.UncheckedInterruptedException;
 import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.entities.Mover;
+import org.bugflux.pacman.entities.Walkable;
 import org.bugflux.pacman.entities.Walkable.Direction;
 
 public class RandomMover extends Thread {
 	protected final Mover m;
+	protected final Walkable game;
 	protected int ms;
 	
-	public RandomMover(Mover m, int ms) {
+	public RandomMover(Walkable game, Mover m, int ms) {
+		assert game != null;
+		assert m != null;
+		assert ms >= 0;
+
+		this.game = game;
 		this.m = m;
 		this.ms = ms;
 	}
@@ -21,11 +28,20 @@ public class RandomMover extends Thread {
 		Direction d[] = { Direction.UP, Direction.DOWN, Direction.RIGHT, Direction.LEFT };
 		Direction previousD, currentD;
 		Coord currentC, previousC;
+		boolean isOver = false;
 		
 		currentC = null;
 		previousC = null;
 		currentD = d[r.nextInt(d.length)];
-		while(true) {
+		while(!isOver) {
+			if(ms > 0) {
+				try {
+					Thread.sleep(ms);
+				} catch (InterruptedException e) {
+					throw new UncheckedInterruptedException(e);
+				} // TODO don't sleep!
+			}
+
 			previousD = currentD;
 			currentD = d[r.nextInt(d.length)]; // new, Random direction
 			
@@ -36,14 +52,10 @@ public class RandomMover extends Thread {
 			}
 			
 			previousC = currentC;
-			currentC = m.tryMove(currentD);
-
-			if(ms > 0) {
-				try {
-					Thread.sleep(ms);
-				} catch (InterruptedException e) {
-					throw new UncheckedInterruptedException(e);
-				} // TODO don't sleep!
+			synchronized(game) {
+				if(!(isOver = game.isOver())) {
+					currentC = m.tryMove(currentD);
+				}
 			}
 		}
 	}

@@ -15,9 +15,4 @@ public class MonitorPositionToggler implements Toggler {
 	public synchronized PositionType tryToggle(Coord c) {
 		return t.tryToggle(c);
 	}
-
-	@Override
-	public synchronized void gameOver() {
-		t.gameOver();
-	}
 }

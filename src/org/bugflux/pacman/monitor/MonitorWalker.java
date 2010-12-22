@@ -54,9 +54,4 @@ public class MonitorWalker implements Controllable {
 	public synchronized boolean isDead() {
 		return w.isDead();
 	}
-	
-	@Override
-	public synchronized void gameOver() {
-		w.gameOver();
-	}
 }
