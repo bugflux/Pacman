@@ -1,8 +1,5 @@
 package org.bugflux.pacman.event;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.bugflux.lock.Metronome;
 import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.entities.Collector;
@@ -14,50 +11,44 @@ import org.bugflux.pacman.entities.World;
 public class TickMap implements World {
 	protected final World w;
 	protected final Metronome tick;
-	protected Lock mutex;
 
 	public TickMap(World w, Metronome tick) {
-		mutex = new ReentrantLock();
+		assert w != null;
+		assert tick != null;
+
 		this.w = w;
 		this.tick = tick;
 	}
 	
 	@Override
 	public void addPositionToggler(Toggler t) {
-		mutex.lock();
 		w.addPositionToggler(t);
-		mutex.unlock();
+		tick.await();
 	}
 	
 	@Override
 	public void addWalker(Controllable co, Coord c) {
-		mutex.lock();
 		w.addWalker(co, c);
-		mutex.unlock();
+		tick.await();
 	}
 	
 	@Override
 	public void addWalker(Collector co, Coord c) {
-		mutex.lock();
 		w.addWalker(co, c);
-		mutex.unlock();
+		tick.await();
 	}
 
 	@Override
 	public Coord tryMove(Controllable c, Direction d) {
-		mutex.lock();
 		Coord r = w.tryMove(c, d);
-		mutex.unlock();
 		tick.await();
 
 		return r;
 	}
 	
 	@Override
-	public synchronized Coord tryMove(Collector c, Direction d) {
-		mutex.lock();
+	public Coord tryMove(Collector c, Direction d) {
 		Coord r = w.tryMove(c, d);
-		mutex.unlock();
 		tick.await();
 
 		return r;
@@ -65,18 +56,15 @@ public class TickMap implements World {
 	
 	@Override
 	public Coord position(Controllable c) {
-		mutex.lock();
 		Coord result = w.position(c);
-		mutex.unlock();
+		tick.await();
 		
 		return result;
 	}
 
 	@Override
 	public PositionType tryTogglePositionType(Toggler t, Coord c) {
-		mutex.lock();
 		PositionType r = w.tryTogglePositionType(t, c);
-		mutex.unlock();
 		tick.await();
 
 		return r;
@@ -84,9 +72,8 @@ public class TickMap implements World {
 
 	@Override
 	public boolean canToggle(Toggler t, Coord c) {
-		mutex.lock();
 		boolean result = w.canToggle(t, c);
-		mutex.unlock();
+		tick.await();
 
 		return result;
 	}
@@ -98,18 +85,16 @@ public class TickMap implements World {
 
 	@Override
 	public boolean isFree(Coord c) {
-		mutex.lock();
 		boolean result = w.isFree(c);
-		mutex.unlock();
+		tick.await();
 
 		return result;
 	}
 
 	@Override
 	public boolean isHall(Coord c) {
-		mutex.lock();
 		boolean result = w.isHall(c);
-		mutex.unlock();
+		tick.await();
 
 		return result;
 	}
@@ -121,10 +106,9 @@ public class TickMap implements World {
 
 	@Override
 	public PositionType positionType(Coord c) {
-		mutex.lock();
 		PositionType result = w.positionType(c);
-		mutex.unlock();
-		
+		tick.await();
+
 		return result;
 	}
 
@@ -140,26 +124,23 @@ public class TickMap implements World {
 
 	@Override
 	public void tryCollect(Collector c) {
-		mutex.lock();
 		w.tryCollect(c);
-		mutex.unlock();
+		tick.await();
 	}
 
 	@Override
 	public boolean hasCollectable(Coord c) {
-		mutex.lock();
 		boolean result = w.hasCollectable(c);
-		mutex.unlock();
-		
+		tick.await();
+
 		return result;
 	}
 
 	@Override
 	public boolean isOver() {
-		mutex.lock();
 		boolean result = w.isOver();
-		mutex.unlock();
-		
+		tick.await();
+
 		return result;
 	}
 }
