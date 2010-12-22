@@ -31,4 +31,9 @@ System.err.println("toggled");
 		s.send();
 		return null; // always does!!
 	}
+
+	@Override
+	public void gameOver() {
+		t.gameOver();
+	}
 }

@@ -1,12 +1,15 @@
 package org.bugflux.pacman;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.Controllable.Team;
+import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.World;
 
 import pt.ua.gboard.CharGelem;
@@ -38,6 +41,8 @@ public class Map implements World {
 	protected final Scoreboard scoreboard;
 	protected final HashMap<Collector, Integer> scoreWalkersId;
 	protected int scoreBeanId;
+	
+	protected final List<Toggler> togglers;
 
 	/**
 	 * .
@@ -58,6 +63,7 @@ public class Map implements World {
 
 		walkers = new HashMap<Controllable, Coord>();
 		scoreWalkersId = new HashMap<Collector, Integer>();
+		togglers = new ArrayList<Toggler>();
 
 		// declare and initialize the screen
 		// the first layer is for the map (walls, halls, doors),r
@@ -100,6 +106,14 @@ public class Map implements World {
 	}
 
 	@Override
+	public void addPositionToggler(Toggler t) {
+		assert t != null;
+		assert !togglers.contains(t);
+
+		togglers.add(t);
+	}
+
+ 	@Override
 	public void addWalker(Collector w, Coord c) {
 		internalAddWalker(w, c);
 		
@@ -204,7 +218,18 @@ public class Map implements World {
 		walkersMap[c.r()][c.c()] = 0;
 		screen.draw(screen.registerGelem(w.gelem()), c.r(), c.c(), graveYardLayer);
 		
+		Team t = w.team();
 		walkers.remove(w);
+		
+		// check if it's the last for this team.
+		for(Controllable x : walkers.keySet()) {
+			if(x.team() == t) {
+				return;
+			}
+		}
+		
+		// it was, so game over!
+		cleanup();
 	}
 
 	private Controllable getControllable(Coord c) {
@@ -235,15 +260,15 @@ public class Map implements World {
 
 	@Override
 	public boolean hasCollectable(Coord c) {
-		// TODO Auto-generated method stub
-		return false;
+		return hasBean(c);
 	}
 
 	@Override
-	public PositionType tryTogglePositionType(Coord c) {
+	public PositionType tryTogglePositionType(Toggler t, Coord c) {
 		assert validPosition(c);
+		assert togglers.contains(t);
 
-		if(!canToggle(c)) {
+		if(!canToggle(t, c)) {
 			return map[c.r()][c.c()];
 		}
 
@@ -262,7 +287,9 @@ public class Map implements World {
 	}
 	
 	@Override
-	public boolean canToggle(Coord c) {
+	public boolean canToggle(Toggler t, Coord c) {
+		assert togglers.contains(t);
+
 		return isFree(c) && !hasBean(c);
 	}
 
@@ -309,6 +336,20 @@ public class Map implements World {
 		beanMap[c.r()][c.c()] = 0;
 		remainingBeans--;
 		scoreboard.setValue(scoreBeanId, remainingBeans());
+		
+		if(remainingBeans() == 0) {
+			cleanup();
+		}
+	}
+	
+	protected void cleanup() {
+		for(Controllable x : walkers.keySet()) {
+			x.gameOver();
+		}
+		
+		for(Toggler t : togglers) {
+			t.gameOver();
+		}
 	}
 	
 	@Override

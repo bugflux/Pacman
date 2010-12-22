@@ -9,6 +9,7 @@ import org.bugflux.pacman.PositionToggler;
 import org.bugflux.pacman.WalkerMover;
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
+import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.World;
 import org.bugflux.pacman.input.AutomaticDoorman;
 import org.bugflux.pacman.input.KeyboardMover;
@@ -61,10 +62,14 @@ public class MonitorDoIt {
 		controller4.start();
 		controller5.start();
 		
-		AutomaticDoorman phantomDoor= new AutomaticDoorman(map, new Coord(6, 10), 3000, 2000);
+		Toggler _phantomDoor = new PositionToggler(map);
+		map.addPositionToggler(_phantomDoor);
+		AutomaticDoorman phantomDoor= new AutomaticDoorman(_phantomDoor, new Coord(6, 10), 3000, 2000);
 		phantomDoor.start();
 
-		MousePositionToggler toggler = new MousePositionToggler(new MonitorPositionToggler(new PositionToggler(map)), _map.getGBoard());
+		Toggler _mouseToggler = new PositionToggler(map);
+		map.addPositionToggler(_mouseToggler);
+		MousePositionToggler toggler = new MousePositionToggler(new MonitorPositionToggler(_mouseToggler), _map.getGBoard());
 		_map.getGBoard().addMouseListener(toggler);
 	}
 }

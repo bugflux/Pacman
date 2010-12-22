@@ -1,12 +1,13 @@
 package org.bugflux.pacman;
 
 import org.bugflux.pacman.entities.Controllable;
+import org.bugflux.pacman.entities.Gamer;
 import org.bugflux.pacman.entities.Walkable;
 import org.bugflux.pacman.entities.Walkable.Direction;
 
 import pt.ua.gboard.Gelem;
 
-public class Walker implements Controllable {
+public class Walker implements Controllable, Gamer {
 	protected final Walkable w;
 	protected Team team; // can change teams!
 	protected boolean dead;
@@ -32,6 +33,7 @@ public class Walker implements Controllable {
 		if(!isDead()) {
 			return w.tryMove(this, d);
 		}
+
 		return null;
 	}
 	
@@ -63,5 +65,10 @@ public class Walker implements Controllable {
 	@Override
 	public Team team() {
 		return team;
+	}
+
+	@Override
+	public void gameOver() {
+		die();
 	}
 }

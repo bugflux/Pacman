@@ -29,6 +29,17 @@ public class Pacman extends Walker implements Collector {
 		}
 		return energy;
 	}
+	
+	// must override this here because this implements collector.
+	// the tryMove in Walker implements controllable, so it won't collect.
+	@Override
+	public Coord tryMove(Direction d) {
+		if(!isDead()) {
+			return w.tryMove(this, d);
+		}
+
+		return null;
+	}
 
 	@Override
 	public int energy() {
@@ -40,13 +51,10 @@ public class Pacman extends Walker implements Collector {
 		dead = true;
 		gelem = new _PacmanGelem(Color.gray);
 	}
-	
+
 	@Override
-	public Coord tryMove(Direction d) {
-		if(!isDead()) {
-			return w.tryMove(this, d);
-		}
-		return null;
+	public void gameOver() {
+		dead = true;
 	}
 }
 

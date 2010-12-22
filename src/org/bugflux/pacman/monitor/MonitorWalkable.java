@@ -3,6 +3,7 @@ package org.bugflux.pacman.monitor;
 import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
+import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.World;
 
 public class MonitorWalkable extends Thread implements World {
@@ -12,14 +13,18 @@ public class MonitorWalkable extends Thread implements World {
 		this.m = m;
 	}
 
+	@Override
+	public synchronized void addPositionToggler(Toggler t) {
+		m.addPositionToggler(t);
+	}
 
 	@Override
-	public void addWalker(Collector w, Coord c) {
+	public synchronized void addWalker(Collector w, Coord c) {
 		m.addWalker(w, c);
 	}
 	
 	@Override
-	public void addWalker(Controllable w, Coord c) {
+	public synchronized  void addWalker(Controllable w, Coord c) {
 		m.addWalker(w, c);
 	}
 
@@ -75,13 +80,13 @@ public class MonitorWalkable extends Thread implements World {
 	}
 
 	@Override
-	public synchronized PositionType tryTogglePositionType(Coord c) {
-		return m.tryTogglePositionType(c);
+	public synchronized PositionType tryTogglePositionType(Toggler t, Coord c) {
+		return m.tryTogglePositionType(t, c);
 	}
 
 	@Override
-	public synchronized boolean canToggle(Coord c) {
-		return m.canToggle(c);
+	public synchronized boolean canToggle(Toggler t, Coord c) {
+		return m.canToggle(t, c);
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import org.bugflux.lock.Metronome;
 import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
+import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.World;
 
 
@@ -19,6 +20,13 @@ public class TickMap implements World {
 		mutex = new ReentrantLock();
 		this.w = w;
 		this.tick = tick;
+	}
+	
+	@Override
+	public void addPositionToggler(Toggler t) {
+		mutex.lock();
+		w.addPositionToggler(t);
+		mutex.unlock();
 	}
 	
 	@Override
@@ -65,9 +73,9 @@ public class TickMap implements World {
 	}
 
 	@Override
-	public PositionType tryTogglePositionType(Coord c) {
+	public PositionType tryTogglePositionType(Toggler t, Coord c) {
 		mutex.lock();
-		PositionType r = w.tryTogglePositionType(c);
+		PositionType r = w.tryTogglePositionType(t, c);
 		mutex.unlock();
 		tick.await();
 
@@ -75,9 +83,9 @@ public class TickMap implements World {
 	}
 
 	@Override
-	public boolean canToggle(Coord c) {
+	public boolean canToggle(Toggler t, Coord c) {
 		mutex.lock();
-		boolean result = w.canToggle(c);
+		boolean result = w.canToggle(t, c);
 		mutex.unlock();
 
 		return result;

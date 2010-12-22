@@ -6,17 +6,20 @@ import org.bugflux.pacman.entities.Walkable.PositionType;
 
 public class PositionToggler implements Toggler {
 	protected MorphingWalkable w;
+	protected boolean over;
 
 	public PositionToggler(MorphingWalkable w) {
 		this.w = w;
+		this.over = false;
 	}
 	
-	public PositionType tryToggle(Coord c) {	
-		if(w.canToggle(c)) {
-			return w.tryTogglePositionType(c);
+	public PositionType tryToggle(Coord c) {
+		if(!over) {
+			return w.tryTogglePositionType(this, c);
 		}
-
-		return w.positionType(c);
+		else {
+			return null;
+		}
 	}
 	
 	public int height() {
@@ -25,5 +28,10 @@ public class PositionToggler implements Toggler {
 	
 	public int width() {
 		return w.width();
+	}
+	
+	@Override
+	public void gameOver() {
+		over = true;
 	}
 }
