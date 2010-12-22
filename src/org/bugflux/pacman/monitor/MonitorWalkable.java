@@ -12,14 +12,25 @@ public class MonitorWalkable extends Thread implements World {
 		this.m = m;
 	}
 
+
+	@Override
+	public void addWalker(Collector w, Coord c) {
+		m.addWalker(w, c);
+	}
+	
+	@Override
+	public void addWalker(Controllable w, Coord c) {
+		m.addWalker(w, c);
+	}
+
 	@Override
 	public synchronized Coord tryMove(Controllable w, Direction d) {
 		return m.tryMove(w, d);
 	}
-
+	
 	@Override
-	public void addWalker(Controllable w, Coord c) {
-		m.addWalker(w, c);
+	public Coord tryMove(Collector w, Direction d) {
+		return m.tryMove(w, d);
 	}
 	
 	@Override
@@ -74,8 +85,8 @@ public class MonitorWalkable extends Thread implements World {
 	}
 
 	@Override
-	public synchronized int tryCollect(Collector c) {
-		return m.tryCollect(c);
+	public synchronized void tryCollect(Collector c) {
+		m.tryCollect(c);
 	}
 
 	@Override

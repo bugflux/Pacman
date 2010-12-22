@@ -34,6 +34,11 @@ public class Map implements World {
 
 	protected final int wallGelemId;
 	protected final int backgroundGelemId;
+	
+	protected final Scoreboard scoreboard;
+	protected final HashMap<Collector, Integer> scoreWalkersId;
+	protected int scoreBeanId;
+
 	/**
 	 * .
 	 * A char map is a 2D char array. Each position contains:
@@ -52,6 +57,7 @@ public class Map implements World {
 		beanMap = new int[height()][width()];
 
 		walkers = new HashMap<Controllable, Coord>();
+		scoreWalkersId = new HashMap<Collector, Integer>();
 
 		// declare and initialize the screen
 		// the first layer is for the map (walls, halls, doors),r
@@ -88,10 +94,24 @@ public class Map implements World {
 				}
 			}
 		}
+
+		scoreboard = new Scoreboard();
+		scoreBeanId = scoreboard.addCounter(new BeanGelem(), remainingBeans());
+	}
+
+	@Override
+	public void addWalker(Collector w, Coord c) {
+		internalAddWalker(w, c);
+		
+		scoreWalkersId.put(w, scoreboard.addCounter(w.gelem(), w.energy()));
 	}
 
 	@Override
 	public void addWalker(Controllable w, Coord c) {
+		internalAddWalker(w, c);
+	}
+	
+	private void internalAddWalker(Controllable w, Coord c) {
 		assert !walkers.containsKey(w);
 		assert isHall(c) && isFree(c);
 
@@ -112,7 +132,16 @@ public class Map implements World {
 	}
 
 	@Override
+	public Coord tryMove(Collector w, Direction d) {
+		return internalTryMove(w, d, true);
+	}
+
+	@Override
 	public Coord tryMove(Controllable w, Direction d) {
+		return internalTryMove(w, d, false);
+	}
+
+	private Coord internalTryMove(Controllable w, Direction d, boolean collect) {
 		assert walkers.containsKey(w);
 		assert !w.isDead();
 		
@@ -122,27 +151,27 @@ public class Map implements World {
 		assert validPosition(c) && isHall(c);
 		
 		if(isFree(c)) {
-			try {
-				Collector collector = (Collector)w;
+			// TODO this is temporary inconsistency!
+			walkers.put(w, c); // replace the walkers coordinates before collecting!
+			
 
-				if(collector.looseEnergy(1) <= 0) {
-					System.err.println("died");
-					killWalker(collector);
-
-					return oldC;
-				}
-				
-				tryCollect(collector);
-			}
-			catch(ClassCastException e) {
-				//System.err.println("unable to cast!");
-				// do nothing, actually!
+			if(collect) {
+				Collector guy = (Collector)w;
+				tryCollect(guy);
+				guy.looseEnergy(1);
+				scoreboard.setValue(scoreWalkersId.get(w), guy.energy());
 			}
 
-			screen.move(walkersMap[oldC.r()][oldC.c()], oldC.r(), oldC.c(), walkerLayer, c.r(), c.c(), walkerLayer);
 			walkersMap[c.r()][c.c()] = walkersMap[oldC.r()][oldC.c()];
+			screen.move(walkersMap[oldC.r()][oldC.c()], oldC.r(), oldC.c(), walkerLayer, c.r(), c.c(), walkerLayer);
 			walkersMap[oldC.r()][oldC.c()] = 0;
-			walkers.put(w, c);
+			
+			if(collect) {
+				Collector guy = (Collector)w;
+				if(guy.isDead()) {
+					killWalker(guy);
+				}
+			}
 
 			return c;
 		}
@@ -153,9 +182,11 @@ public class Map implements World {
 				// the good one dies.
 				System.err.println("collision");
 				if(w.team() == Team.GOOD) {
+					w.die();
 					killWalker(w);
 				}
 				else {
+					contr.die();
 					killWalker(contr);
 				}
 			}
@@ -163,13 +194,12 @@ public class Map implements World {
 			return oldC;
 		}
 	}
-	
+
 	private void killWalker(Controllable w) {
 		assert walkers.containsKey(w);
-		assert !w.isDead();
+		assert w.isDead();
 
 		Coord c = walkers.get(w);
-		w.die();
 		
 		screen.erase(walkersMap[c.r()][c.c()], c.r(), c.c(), walkerLayer);
 		walkersMap[c.r()][c.c()] = 0;
@@ -193,16 +223,15 @@ public class Map implements World {
 	}
 
 	@Override
-	public int tryCollect(Collector w) {
+	public void tryCollect(Collector w) {
 		assert walkers.containsKey(w);
 		assert !w.isDead();
 
-		Coord c = w.getCoord();
+		Coord c = walkers.get(w);
 		if(hasBean(c)) {
 			w.gainEnergy(10);
+			removeBean(c);
 		}
-		
-		return 0;
 	}
 
 	@Override
@@ -274,11 +303,13 @@ public class Map implements World {
 		return remainingBeans;
 	}
 
-	public void removeBean(Coord c) {
+	protected void removeBean(Coord c) {
 		assert hasBean(c);
 		
 		screen.erase(beanMap[c.r()][c.c()], c.r(), c.c(), beanLayer);
 		beanMap[c.r()][c.c()] = 0;
+		remainingBeans--;
+		scoreboard.setValue(scoreBeanId, remainingBeans());
 	}
 	
 	@Override

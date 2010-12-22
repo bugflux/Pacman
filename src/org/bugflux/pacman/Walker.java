@@ -12,22 +12,14 @@ public class Walker implements Controllable {
 	protected boolean dead;
 	protected Gelem gelem;
 
-	public Walker(Walkable w, Coord c, Gelem g, Team t) {
+	public Walker(Walkable w, Gelem g, Team t) {
 		assert w != null;
-		assert c != null;
 		assert t != null;
 		
 		this.team = t;
 		this.w = w;
 		this.gelem = g;
 		dead = false;
-		
-		if(w.isFree(c) && w.isHall(c)) {
-			w.addWalker(this, c);
-		}
-		else {
-			assert false;
-		}
 	}
 
 	@Override
@@ -37,7 +29,10 @@ public class Walker implements Controllable {
 
 	@Override
 	public Coord tryMove(Direction d) {
-		return w.tryMove(this, d);
+		if(!isDead()) {
+			return w.tryMove(this, d);
+		}
+		return null;
 	}
 	
 	@Override
@@ -57,7 +52,7 @@ public class Walker implements Controllable {
 
 	@Override
 	public void die() {
-		System.err.println("killed!");
+		dead = true;
 	}
 	
 	@Override

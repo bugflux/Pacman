@@ -9,7 +9,7 @@ public interface Garden extends Walkable {
 	 * 
 	 * @param c 
 	 */
-	public int tryCollect(Collector c);
+	public void tryCollect(Collector c);
 	
 	/**
 	 * Check if there is something to collect in a position.
@@ -18,4 +18,16 @@ public interface Garden extends Walkable {
 	 * @return true if there is something to collect, false otherwise.
 	 */
 	public boolean hasCollectable(Coord c);
+	
+	public void addWalker(Collector w, Coord c);
+	
+	/**
+	 * Special move in a garden. Tries to collect whatever
+	 * is in the destination position beforehand.
+	 * 
+	 * @param w The collector to move.
+	 * @param d The direction to move in.
+	 * @return the final coordinates of the collector in the map.
+	 */
+	public Coord tryMove(Collector w, Direction d);
 }

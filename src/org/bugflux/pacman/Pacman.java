@@ -10,8 +10,8 @@ public class Pacman extends Walker implements Collector {
 	protected int energy;
 	protected Garden w;
 
-	public Pacman(Garden w, Coord c) {
-		super(w, c, new _PacmanGelem(Color.yellow), Team.GOOD);
+	public Pacman(Garden w) {
+		super(w, new _PacmanGelem(Color.yellow), Team.GOOD);
 		this.w = w;
 		energy = 10;
 	}
@@ -23,7 +23,11 @@ public class Pacman extends Walker implements Collector {
 
 	@Override
 	public int looseEnergy(int amount) {
-		return energy -= amount;
+		energy -= amount;
+		if(energy <= 0) {
+			die();
+		}
+		return energy;
 	}
 
 	@Override
@@ -39,8 +43,10 @@ public class Pacman extends Walker implements Collector {
 	
 	@Override
 	public Coord tryMove(Direction d) {
-		w.tryCollect(this);
-		return w.tryMove(this, d);
+		if(!isDead()) {
+			return w.tryMove(this, d);
+		}
+		return null;
 	}
 }
 

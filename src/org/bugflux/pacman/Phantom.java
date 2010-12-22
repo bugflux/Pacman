@@ -6,8 +6,8 @@ import pt.ua.gboard.GBoard;
 import pt.ua.gboard.ImageGelem;
 
 public class Phantom extends Walker {
-	public Phantom(Walkable w, Coord c, GBoard g, Guy d) {
-		super(w, c, new PhantomGelem(d.imagePath(), g), Team.VILLAIN); // TODO warning
+	public Phantom(Walkable w, GBoard g, Guy d) {
+		super(w, new PhantomGelem(d.imagePath(), g), Team.VILLAIN); // TODO warning
 	}
 	
 	public static enum Guy {

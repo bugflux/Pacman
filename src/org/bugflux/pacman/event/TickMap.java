@@ -20,6 +20,20 @@ public class TickMap implements World {
 		this.w = w;
 		this.tick = tick;
 	}
+	
+	@Override
+	public void addWalker(Controllable co, Coord c) {
+		mutex.lock();
+		w.addWalker(co, c);
+		mutex.unlock();
+	}
+	
+	@Override
+	public void addWalker(Collector co, Coord c) {
+		mutex.lock();
+		w.addWalker(co, c);
+		mutex.unlock();
+	}
 
 	@Override
 	public Coord tryMove(Controllable c, Direction d) {
@@ -30,12 +44,15 @@ public class TickMap implements World {
 
 		return r;
 	}
-
+	
 	@Override
-	public void addWalker(Controllable co, Coord c) {
+	public synchronized Coord tryMove(Collector c, Direction d) {
 		mutex.lock();
-		w.addWalker(co, c);
+		Coord r = w.tryMove(c, d);
 		mutex.unlock();
+		tick.await();
+
+		return r;
 	}
 	
 	@Override
@@ -114,12 +131,10 @@ public class TickMap implements World {
 	}
 
 	@Override
-	public int tryCollect(Collector c) {
+	public void tryCollect(Collector c) {
 		mutex.lock();
-		int result = w.tryCollect(c);
+		w.tryCollect(c);
 		mutex.unlock();
-
-		return result;
 	}
 
 	@Override
