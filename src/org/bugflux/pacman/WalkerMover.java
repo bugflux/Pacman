@@ -13,11 +13,6 @@ public class WalkerMover implements Mover {
 	}
 	
 	public Coord tryMove(Direction d) {
-		if(c.canMove(d)) {
-			return c.tryMove(d);
-		}
-		else {
-			return null;
-		}
+		return c.tryMove(d);
 	}
 }

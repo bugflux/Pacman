@@ -27,8 +27,8 @@ public class KeyboardMover implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		synchronized(game) {
-			if(!game.isOver()) {
+//		synchronized(game) {
+//			if(!game.isOver()) {
 				switch(e.getKeyCode()) {
 					case java.awt.event.KeyEvent.VK_UP:    m.tryMove(Direction.UP);    break;
 					case java.awt.event.KeyEvent.VK_DOWN:  m.tryMove(Direction.DOWN);  break;
@@ -36,8 +36,8 @@ public class KeyboardMover implements KeyListener {
 					case java.awt.event.KeyEvent.VK_LEFT:  m.tryMove(Direction.LEFT);  break;
 					default: // not supported
 				}
-			}
-		}
+//			}
+//		}
 	}
 
 	@Override

@@ -172,6 +172,10 @@ public class Map implements World {
 
 		assert validPosition(c) && isHall(c);
 		
+		if(!isHall(c)) {
+			return oldC;
+		}
+		
 		if(isFree(c)) {
 			// TODO this is temporary inconsistency!
 			walkers.put(w, c); // replace the walkers coordinates before collecting!

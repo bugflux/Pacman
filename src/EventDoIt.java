@@ -27,20 +27,21 @@ public class EventDoIt {
 
 		Map _map = new Map(SequentialDoIt.readLabyrinth(args[0]));
 		World __map = new MonitorWalkable(_map);
-		Metronome metronome = new Metronome(100);
+		Metronome metronome = new Metronome(1000);
 		metronome.start();
 		TickMap map = new TickMap(__map, metronome);
 
 		Collector pacman1 = new Pacman(map);
 		map.addWalker(pacman1, new Coord(1, 1));
-		EventWalkerMover mover1 = new EventWalkerMover(new WalkerMover(pacman1));
+		EventWalkerMover mover1 = new EventWalkerMover(map, new WalkerMover(pacman1));
+		mover1.start();
 		KeyboardMover controller1 = new KeyboardMover(map, mover1);
 		_map.getGBoard().addKeyListener(controller1);
 
-		Controllable pinky = new Phantom(map, _map.getGBoard(), Guy.Pinky);
-		map.addWalker(pinky, new Coord(7, 10));
-		EventWalkerMover mover2 = new EventWalkerMover(new WalkerMover(pinky));
-		RandomMover controller2 = new RandomMover(map, mover2, 100);
+//		Controllable pinky = new Phantom(map, _map.getGBoard(), Guy.Pinky);
+//		map.addWalker(pinky, new Coord(7, 10));
+//		EventWalkerMover mover2 = new EventWalkerMover(new WalkerMover(pinky));
+//		RandomMover controller2 = new RandomMover(map, mover2, 100);
 //		
 //		Controllable blinky = new Phantom(map, _map.getGBoard(), Guy.Blinky);
 //		map.addWalker(blinky, new Coord(7, 11));
@@ -57,7 +58,7 @@ public class EventDoIt {
 //		EventWalkerMover mover5 = new EventWalkerMover(new WalkerMover(clyde));
 //		RandomMover controller5 = new RandomMover(map, mover4, 500);
 //		
-		controller2.start();
+//		controller2.start();
 //		controller3.start();
 //		controller4.start();
 //		controller5.start();
