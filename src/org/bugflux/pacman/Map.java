@@ -169,10 +169,8 @@ public class Map implements World {
 		
 		Coord oldC = walkers.get(w); //w.getCoord();
 		Coord c = newCoord(oldC, d);
-
-		assert validPosition(c) && isHall(c);
 		
-		if(!isHall(c)) {
+		if(!validPosition(c) || !isHall(c)) {
 			return oldC;
 		}
 		

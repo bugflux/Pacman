@@ -10,7 +10,6 @@ import org.bugflux.pacman.entities.Walkable.Direction;
 public class EventWalkerMover extends Thread implements Mover {
 	protected final Walkable w;
 	protected final WalkerMover m;
-	protected volatile boolean hasMove;
 	protected volatile Direction d;
 	protected Signal s;
 	
@@ -19,7 +18,6 @@ public class EventWalkerMover extends Thread implements Mover {
 		assert m != null;
 		
 		s = new Signal();
-		hasMove = false;
 		this.w = w;
 		this.m = m;
 	}
@@ -36,9 +34,7 @@ public class EventWalkerMover extends Thread implements Mover {
 	@Override
 	public Coord tryMove(Direction d) {
 		this.d = d;
-		hasMove = true;
 		s.send();
-System.err.println("tryMove consumed");
 		return null;
 	}
 }

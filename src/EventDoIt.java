@@ -27,7 +27,7 @@ public class EventDoIt {
 
 		Map _map = new Map(SequentialDoIt.readLabyrinth(args[0]));
 		World __map = new MonitorWalkable(_map);
-		Metronome metronome = new Metronome(1000);
+		Metronome metronome = new Metronome(100);
 		metronome.start();
 		TickMap map = new TickMap(__map, metronome);
 
@@ -38,34 +38,35 @@ public class EventDoIt {
 		KeyboardMover controller1 = new KeyboardMover(map, mover1);
 		_map.getGBoard().addKeyListener(controller1);
 
-//		Controllable pinky = new Phantom(map, _map.getGBoard(), Guy.Pinky);
-//		map.addWalker(pinky, new Coord(7, 10));
-//		EventWalkerMover mover2 = new EventWalkerMover(new WalkerMover(pinky));
-//		RandomMover controller2 = new RandomMover(map, mover2, 100);
-//		
-//		Controllable blinky = new Phantom(map, _map.getGBoard(), Guy.Blinky);
-//		map.addWalker(blinky, new Coord(7, 11));
-//		EventWalkerMover mover3 = new EventWalkerMover(new WalkerMover(blinky));
-//		RandomMover controller3 = new RandomMover(map, mover3, 0);
-//		
-//		Controllable inky = new Phantom(map, _map.getGBoard(), Guy.Inky);
-//		map.addWalker(inky, new Coord(7, 12));
-//		EventWalkerMover mover4 = new EventWalkerMover(new WalkerMover(inky));
-//		RandomMover controller4 = new RandomMover(map, mover4, 250);
-//		
-//		Controllable clyde = new Phantom(map, _map.getGBoard(), Guy.Clyde);
-//		map.addWalker(clyde, new Coord(7, 13));
-//		EventWalkerMover mover5 = new EventWalkerMover(new WalkerMover(clyde));
-//		RandomMover controller5 = new RandomMover(map, mover4, 500);
-//		
-//		controller2.start();
-//		controller3.start();
-//		controller4.start();
-//		controller5.start();
-//
-//		mover3.start();
-//		mover4.start();
-//		mover5.start();
+		Controllable pinky = new Phantom(map, _map.getGBoard(), Guy.Pinky);
+		map.addWalker(pinky, new Coord(7, 10));
+		EventWalkerMover mover2 = new EventWalkerMover(map, new WalkerMover(pinky));
+		RandomMover controller2 = new RandomMover(map, mover2, 100);
+		
+		Controllable blinky = new Phantom(map, _map.getGBoard(), Guy.Blinky);
+		map.addWalker(blinky, new Coord(7, 11));
+		EventWalkerMover mover3 = new EventWalkerMover(map, new WalkerMover(blinky));
+		RandomMover controller3 = new RandomMover(map, mover3, 0);
+		
+		Controllable inky = new Phantom(map, _map.getGBoard(), Guy.Inky);
+		map.addWalker(inky, new Coord(7, 12));
+		EventWalkerMover mover4 = new EventWalkerMover(map, new WalkerMover(inky));
+		RandomMover controller4 = new RandomMover(map, mover4, 250);
+		
+		Controllable clyde = new Phantom(map, _map.getGBoard(), Guy.Clyde);
+		map.addWalker(clyde, new Coord(7, 13));
+		EventWalkerMover mover5 = new EventWalkerMover(map, new WalkerMover(clyde));
+		RandomMover controller5 = new RandomMover(map, mover4, 500);
+		
+		controller2.start();
+		controller3.start();
+		controller4.start();
+		controller5.start();
+
+		mover2.start();
+		mover3.start();
+		mover4.start();
+		mover5.start();
 
 		EventPositionToggler positionToggler = new EventPositionToggler(new PositionToggler(map));
 		positionToggler.start();
