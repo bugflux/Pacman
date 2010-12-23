@@ -28,12 +28,9 @@ public class Walker implements Controllable {
 	}
 
 	@Override
-	public Coord tryMove(Direction d) {
-		if(!isDead()) {
-			return w.tryMove(this, d);
-		}
-
-		return null;
+	public Coord move(Direction d) {
+		assert !isDead();
+		return w.move(this, d);
 	}
 	
 	@Override

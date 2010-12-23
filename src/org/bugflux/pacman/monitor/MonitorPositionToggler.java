@@ -12,7 +12,12 @@ public class MonitorPositionToggler implements Toggler {
 	}
 
 	@Override
-	public synchronized PositionType tryToggle(Coord c) {
-		return t.tryToggle(c);
+	public synchronized PositionType toggle(Coord c) {
+		return t.toggle(c);
+	}
+
+	@Override
+	public synchronized boolean canToggle(Coord c) {
+		return t.canToggle(c);
 	}
 }

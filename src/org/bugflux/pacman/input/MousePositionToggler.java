@@ -33,12 +33,13 @@ public class MousePositionToggler implements MouseListener {
 	public void mousePressed(MouseEvent e) {
 		synchronized(game) {
 			if(!game.isOver()) {
-				t.tryToggle(
-						new Coord(
-								g.numberOfLines() * e.getY() / (int)(g.getHeight()),
-								g.numberOfColumns() * e.getX() / (int)(g.getWidth())
-								)
+				Coord c = new Coord(
+						g.numberOfLines() * e.getY() / (int)(g.getHeight()),
+						g.numberOfColumns() * e.getX() / (int)(g.getWidth())
 						);
+				if(t.canToggle(c)) {
+					t.toggle(c);
+				}
 			}
 		}
 	}

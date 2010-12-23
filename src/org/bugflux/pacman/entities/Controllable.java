@@ -25,7 +25,7 @@ public interface Controllable {
 	 * @param d
 	 * @return
 	 */
-	public abstract Coord tryMove(Direction d);
+	public abstract Coord move(Direction d);
 	
 	/**
 	 * 

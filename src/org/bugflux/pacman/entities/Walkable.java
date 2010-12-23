@@ -12,7 +12,7 @@ public interface Walkable extends Game {
 	 * @param w The walker that wishes to move.
 	 * @return the new Coordinates of the walker.
 	 */
-	public abstract Coord tryMove(Controllable w, Direction d);
+	public abstract Coord move(Controllable w, Direction d);
 
 	/**
 	 * Add a Walker to a specified row,column coordinate.

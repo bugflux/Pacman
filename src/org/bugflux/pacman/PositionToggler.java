@@ -13,13 +13,14 @@ public class PositionToggler implements Toggler {
 		this.over = false;
 	}
 	
-	public PositionType tryToggle(Coord c) {
-		if(!over) {
-			return w.tryTogglePositionType(this, c);
-		}
-		else {
-			return null;
-		}
+	@Override
+	public PositionType toggle(Coord c) {
+		return w.togglePositionType(this, c);
+	}
+	
+	@Override
+	public boolean canToggle(Coord c) {
+		return w.canToggle(this, c);
 	}
 	
 	public int height() {

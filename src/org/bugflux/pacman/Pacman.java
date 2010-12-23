@@ -33,9 +33,9 @@ public class Pacman extends Walker implements Collector {
 	// must override this here because this implements collector.
 	// the tryMove in Walker implements controllable, so it won't collect.
 	@Override
-	public Coord tryMove(Direction d) {
-		if(!isDead()) {
-			return w.tryMove(this, d);
+	public Coord move(Direction d) {
+		if(!isDead() && canMove(d)) {
+			return w.move(this, d);
 		}
 
 		return null;

@@ -55,7 +55,7 @@ public class AutomaticDoorman extends Thread {
 				synchronized(game) {
 					if(!(isOver = game.isOver())) {
 						previous = current;
-						current = toggler.tryToggle(door);
+						current = toggler.toggle(door);
 					}
 				}
 				if(current == previous) {

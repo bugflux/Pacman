@@ -17,7 +17,7 @@ public interface MorphingWalkable extends Walkable {
 	 * @param c The position's coordinates.
 	 * @return The new PositionType for that position.
 	 */
-	public abstract PositionType tryTogglePositionType(Toggler t, Coord c);
+	public abstract PositionType togglePositionType(Toggler t, Coord c);
 	
 	/**
 	 * Check if it is possible to toggle a given position.

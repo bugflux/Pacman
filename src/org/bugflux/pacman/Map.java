@@ -152,36 +152,33 @@ public class Map implements World {
 	}
 
 	@Override
-	public Coord tryMove(Collector w, Direction d) {
+	public Coord move(Collector w, Direction d) {
 		assert !isOver();
-		return internalTryMove(w, d, true);
+		return move(w, d, true);
 	}
 
 	@Override
-	public Coord tryMove(Controllable w, Direction d) {
+	public Coord move(Controllable w, Direction d) {
 		assert !isOver();
-		return internalTryMove(w, d, false);
+		return move(w, d, false);
 	}
 
-	private Coord internalTryMove(Controllable w, Direction d, boolean collect) {
+	private Coord move(Controllable w, Direction d, boolean collect) {
 		assert walkers.containsKey(w);
 		assert !w.isDead();
 		
 		Coord oldC = walkers.get(w); //w.getCoord();
 		Coord c = newCoord(oldC, d);
-		
-		if(!validPosition(c) || !isHall(c)) {
-			return oldC;
-		}
+
+		assert isHall(c);
 		
 		if(isFree(c)) {
 			// TODO this is temporary inconsistency!
 			walkers.put(w, c); // replace the walkers coordinates before collecting!
-			
 
 			if(collect) {
 				Collector guy = (Collector)w;
-				tryCollect(guy);
+				collect(guy);
 				guy.looseEnergy(1);
 				scoreboard.setValue(scoreWalkersId.get(w), guy.energy());
 			}
@@ -259,7 +256,7 @@ public class Map implements World {
 	}
 
 	@Override
-	public void tryCollect(Collector w) {
+	public void collect(Collector w) {
 		assert !isOver();
 		assert walkers.containsKey(w);
 		assert !w.isDead();
@@ -278,14 +275,11 @@ public class Map implements World {
 	}
 
 	@Override
-	public PositionType tryTogglePositionType(Toggler t, Coord c) {
+	public PositionType togglePositionType(Toggler t, Coord c) {
 		assert !isOver();
 		assert validPosition(c);
 		assert togglers.contains(t);
-
-		if(!canToggle(t, c)) {
-			return map[c.r()][c.c()];
-		}
+		assert canToggle(t, c);
 
 		if(isHall(c)) {
 			screen.erase(gelemIdMap[c.r()][c.c()], c.r(), c.c(), mapLayer);
@@ -327,6 +321,7 @@ public class Map implements World {
 	@Override
 	public boolean isHall(Coord c) {
 		assert !isOver();
+		assert validPosition(c);
 		return positionType(c) == PositionType.HALL;
 	}
 

@@ -25,8 +25,8 @@ public class MonitorWalker implements Controllable {
 	}
 
 	@Override
-	public synchronized Coord tryMove(Direction d) {
-		return w.tryMove(d);
+	public synchronized Coord move(Direction d) {
+		return w.move(d);
 	}
 
 	@Override

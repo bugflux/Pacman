@@ -29,13 +29,13 @@ public class MonitorWalkable extends Thread implements World {
 	}
 
 	@Override
-	public synchronized Coord tryMove(Controllable w, Direction d) {
-		return m.tryMove(w, d);
+	public synchronized Coord move(Controllable w, Direction d) {
+		return m.move(w, d);
 	}
 	
 	@Override
-	public Coord tryMove(Collector w, Direction d) {
-		return m.tryMove(w, d);
+	public Coord move(Collector w, Direction d) {
+		return m.move(w, d);
 	}
 	
 	@Override
@@ -80,8 +80,8 @@ public class MonitorWalkable extends Thread implements World {
 	}
 
 	@Override
-	public synchronized PositionType tryTogglePositionType(Toggler t, Coord c) {
-		return m.tryTogglePositionType(t, c);
+	public synchronized PositionType togglePositionType(Toggler t, Coord c) {
+		return m.togglePositionType(t, c);
 	}
 
 	@Override
@@ -90,8 +90,8 @@ public class MonitorWalkable extends Thread implements World {
 	}
 
 	@Override
-	public synchronized void tryCollect(Collector c) {
-		m.tryCollect(c);
+	public synchronized void collect(Collector c) {
+		m.collect(c);
 	}
 
 	@Override

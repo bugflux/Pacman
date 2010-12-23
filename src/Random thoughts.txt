@@ -41,3 +41,9 @@ processa todos de uma vez.
 /////
 O modo assincrono consegue-se se a informação dos walkers (Coord) estiver
 guardada no mapa, e não em cada um!!
+
+
+////
+23 Dez
+Mandar o tryToggle para baixo, não fazer o try no input! Ou então ao contrário.
+Mas manter coerência entre o toggle e o move!
