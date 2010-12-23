@@ -380,13 +380,13 @@ public class Map implements World {
 
 	@Override
 	public int height() {
-		assert !isOver();
+//		assert !isOver();
 		return map.length;
 	}
 
 	@Override
 	public int width() {
-		assert !isOver();
+//		assert !isOver();
 		return map[0].length;
 	}
 	

@@ -6,7 +6,6 @@ import org.bugflux.pacman.Pacman;
 import org.bugflux.pacman.Phantom;
 import org.bugflux.pacman.Phantom.Guy;
 import org.bugflux.pacman.PositionToggler;
-import org.bugflux.pacman.WalkerMover;
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.Toggler;
@@ -18,7 +17,6 @@ import org.bugflux.pacman.input.RandomMover;
 import org.bugflux.pacman.monitor.MonitorPositionToggler;
 import org.bugflux.pacman.monitor.MonitorWalkable;
 import org.bugflux.pacman.monitor.MonitorWalker;
-import org.bugflux.pacman.monitor.MonitorWalkerMover;
 
 
 public class MonitorDoIt {
@@ -34,28 +32,28 @@ public class MonitorDoIt {
 		Collector _pacman = new Pacman(map);
 		map.addWalker(_pacman, new Coord(1, 1));
 		Controllable pacman = new MonitorWalker(_pacman);
-		KeyboardMover controller = new KeyboardMover(map, new MonitorWalkerMover(new WalkerMover(pacman)));
+		KeyboardMover controller = new KeyboardMover(map, pacman);
 		_map.getGBoard().addKeyListener(controller);
 		
 		Controllable _pinky = new Phantom(map, _map.getGBoard(), Guy.Pinky);
 		map.addWalker(_pinky, new Coord(7, 10));
 		Controllable pinky = new MonitorWalker(_pinky);
-		RandomMover controller2 = new RandomMover(map, new MonitorWalkerMover(new WalkerMover(pinky)), 87);
+		RandomMover controller2 = new RandomMover(map, pinky, 87);
 		
 		Controllable _blinky = new Phantom(map, _map.getGBoard(), Guy.Blinky);
 		map.addWalker(_blinky, new Coord(7, 11));
 		Controllable blinky = new MonitorWalker(_blinky);
-		RandomMover controller3 = new RandomMover(map, new MonitorWalkerMover(new WalkerMover(blinky)), 175);
+		RandomMover controller3 = new RandomMover(map, blinky, 175);
 		
 		Controllable _inky = new Phantom(map, _map.getGBoard(), Guy.Inky);
 		map.addWalker(_inky, new Coord(7, 12));
 		Controllable inky = new MonitorWalker(_inky);
-		RandomMover controller4 = new RandomMover(map, new MonitorWalkerMover(new WalkerMover(inky)), 250);
+		RandomMover controller4 = new RandomMover(map, inky, 250);
 		
 		Controllable _clyde = new Phantom(map, _map.getGBoard(), Guy.Clyde);
 		map.addWalker(_clyde, new Coord(7, 13));
 		Controllable clyde = new MonitorWalker(_clyde);
-		RandomMover controller5 = new RandomMover(map, new MonitorWalkerMover(new WalkerMover(clyde)), 500);
+		RandomMover controller5 = new RandomMover(map, clyde, 500);
 		
 		controller2.start();
 		controller3.start();

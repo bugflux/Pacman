@@ -3,16 +3,16 @@ package org.bugflux.pacman.input;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import org.bugflux.pacman.entities.Mover;
+import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.Walkable;
 import org.bugflux.pacman.entities.Walkable.Direction;
 
 
 public class KeyboardMover implements KeyListener {
-	protected final Mover m;
+	protected final Controllable m;
 	protected final Walkable game;
 
-	public KeyboardMover(Walkable game, Mover m) {
+	public KeyboardMover(Walkable game, Controllable m) {
 		assert m != null;
 		assert game != null;
 
@@ -29,12 +29,23 @@ public class KeyboardMover implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		synchronized(game) {
 			if(!game.isOver()) {
+				Direction d = null;
+				boolean acted = true;
+
 				switch(e.getKeyCode()) {
-					case java.awt.event.KeyEvent.VK_UP:    m.tryMove(Direction.UP);    break;
-					case java.awt.event.KeyEvent.VK_DOWN:  m.tryMove(Direction.DOWN);  break;
-					case java.awt.event.KeyEvent.VK_RIGHT: m.tryMove(Direction.RIGHT); break;
-					case java.awt.event.KeyEvent.VK_LEFT:  m.tryMove(Direction.LEFT);  break;
-					default: // not supported
+					case java.awt.event.KeyEvent.VK_UP:    d = Direction.UP; break;
+					case java.awt.event.KeyEvent.VK_DOWN:  d = Direction.DOWN; break;
+					case java.awt.event.KeyEvent.VK_RIGHT: d = Direction.RIGHT; break;
+					case java.awt.event.KeyEvent.VK_LEFT:  d = Direction.LEFT; break;
+					default: acted = false; // not supported
+				}
+
+				if(acted) {
+					synchronized(m) {
+						if(m.canMove(d)) {
+							m.move(d);
+						}
+					}
 				}
 			}
 		}

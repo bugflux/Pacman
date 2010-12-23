@@ -30,6 +30,8 @@ public class Walker implements Controllable {
 	@Override
 	public Coord move(Direction d) {
 		assert !isDead();
+		assert canMove(d);
+
 		return w.move(this, d);
 	}
 	

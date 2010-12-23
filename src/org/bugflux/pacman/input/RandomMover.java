@@ -4,16 +4,16 @@ import java.util.Random;
 
 import org.bugflux.lock.UncheckedInterruptedException;
 import org.bugflux.pacman.Coord;
-import org.bugflux.pacman.entities.Mover;
+import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.Walkable;
 import org.bugflux.pacman.entities.Walkable.Direction;
 
 public class RandomMover extends Thread {
-	protected final Mover m;
+	protected final Controllable m;
 	protected final Walkable game;
 	protected int ms;
 	
-	public RandomMover(Walkable game, Mover m, int ms) {
+	public RandomMover(Walkable game, Controllable m, int ms) {
 		assert game != null;
 		assert m != null;
 		assert ms >= 0;
@@ -54,7 +54,11 @@ public class RandomMover extends Thread {
 			previousC = currentC;
 			synchronized(game) {
 				if(!(isOver = game.isOver())) {
-					currentC = m.tryMove(currentD);
+					synchronized(m) {
+						if(m.canMove(currentD)) {
+							currentC = m.move(currentD);
+						}
+					}
 				}
 			}
 		}
