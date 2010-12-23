@@ -37,8 +37,10 @@ public class MousePositionToggler implements MouseListener {
 						g.numberOfLines() * e.getY() / (int)(g.getHeight()),
 						g.numberOfColumns() * e.getX() / (int)(g.getWidth())
 						);
-				if(t.canToggle(c)) {
-					t.toggle(c);
+				synchronized(t) {
+					if(t.canToggle(c)) {
+						t.toggle(c);
+					}
 				}
 			}
 		}
