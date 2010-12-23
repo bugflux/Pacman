@@ -104,7 +104,8 @@ public class Map implements World {
 		}
 
 		scoreboard = new Scoreboard();
-		scoreBeanId = scoreboard.addCounter(new BeanGelem(), remainingBeans());
+		scoreBeanId = scoreboard.addCounter(new BeanGelem(), remainingBeans);
+		// can't call "remainingBeans()" method because of circular dependency for "isOver()"
 	}
 
 	@Override
@@ -397,6 +398,9 @@ public class Map implements World {
 
 	@Override
 	public boolean isOver() {
+		if(!screen.isShowing() || !scoreboard.isShowing()) {
+			isOver = true;
+		}
 		return isOver;
 	}
 }

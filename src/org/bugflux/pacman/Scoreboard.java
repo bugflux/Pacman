@@ -70,4 +70,8 @@ public class Scoreboard {
 			screen.draw(counterIds[r], r, 1);
 		}
 	}
+	
+	public boolean isShowing() {
+		return screen.isShowing();
+	}
 }
