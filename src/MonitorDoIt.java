@@ -6,16 +6,19 @@ import org.bugflux.pacman.Pacman;
 import org.bugflux.pacman.Phantom;
 import org.bugflux.pacman.Phantom.Guy;
 import org.bugflux.pacman.PositionToggler;
+import org.bugflux.pacman.Scoreboard;
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.World;
+import org.bugflux.pacman.input.AutomaticBonusPlacer;
 import org.bugflux.pacman.input.AutomaticDoorman;
 import org.bugflux.pacman.input.KeyboardMover;
 import org.bugflux.pacman.input.MousePositionToggler;
 import org.bugflux.pacman.input.RandomMover;
 import org.bugflux.pacman.monitor.MonitorPositionToggler;
-import org.bugflux.pacman.monitor.MonitorWalkable;
+import org.bugflux.pacman.monitor.MonitorScoreboard;
+import org.bugflux.pacman.monitor.MonitorMap;
 import org.bugflux.pacman.monitor.MonitorWalker;
 
 
@@ -26,8 +29,8 @@ public class MonitorDoIt {
 			System.exit(-1);
 		}
 
-		Map _map = new Map(SequentialDoIt.readLabyrinth(args[0]));
-		World map = new MonitorWalkable(_map);
+		Map _map = new Map(SequentialDoIt.readLabyrinth(args[0]), new MonitorScoreboard(new Scoreboard()));
+		World map = new MonitorMap(_map);
 
 		Collector _pacman = new Pacman(map);
 		map.addWalker(_pacman, new Coord(1, 1));
@@ -69,5 +72,16 @@ public class MonitorDoIt {
 		map.addPositionToggler(_mouseToggler);
 		MousePositionToggler toggler = new MousePositionToggler(map, new MonitorPositionToggler(_mouseToggler), _map.getGBoard());
 		_map.getGBoard().addMouseListener(toggler);
+		
+		AutomaticBonusPlacer abp = new AutomaticBonusPlacer(map, 1000, 15000);
+		abp.start();
+		
+		controller2.join();
+		controller3.join();
+		controller4.join();
+		controller5.join();
+		phantomDoor.join();
+
+		System.out.println("All is ok");
 	}
 }

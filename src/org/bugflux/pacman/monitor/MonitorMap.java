@@ -1,15 +1,16 @@
 package org.bugflux.pacman.monitor;
 
 import org.bugflux.pacman.Coord;
+import org.bugflux.pacman.entities.Bonus;
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.World;
 
-public class MonitorWalkable extends Thread implements World {
+public class MonitorMap extends Thread implements World {
 	protected final World m;
 
-	public MonitorWalkable(World m) {
+	public MonitorMap(World m) {
 		this.m = m;
 	}
 
@@ -102,5 +103,25 @@ public class MonitorWalkable extends Thread implements World {
 	@Override
 	public synchronized boolean isOver() {
 		return m.isOver();
+	}
+
+	@Override
+	public synchronized void addBonus(Bonus b, Coord c) {
+		m.addBonus(b, c);
+	}
+	
+	@Override
+	public synchronized void removeBonus(Bonus b) {
+		m.removeBonus(b);
+	}
+
+	@Override
+	public synchronized boolean hasBonus(Coord c) {
+		return m.hasBonus(c);
+	}
+
+	@Override
+	public synchronized boolean hasBean(Coord c) {
+		return m.hasBean(c);
 	}
 }

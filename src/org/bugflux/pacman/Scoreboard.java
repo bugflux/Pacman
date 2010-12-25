@@ -2,6 +2,8 @@ package org.bugflux.pacman;
 
 import java.awt.Color;
 
+import org.bugflux.pacman.entities.Scorekeeper;
+
 import pt.ua.gboard.GBoard;
 import pt.ua.gboard.Gelem;
 import pt.ua.gboard.StringGelem;
@@ -12,7 +14,7 @@ import pt.ua.gboard.StringGelem;
  * @author ndray
  *
  */
-public class Scoreboard {
+public class Scoreboard implements Scorekeeper {
 	protected GBoard screen;
 	protected int numCounters;
 	protected int counters[];
@@ -51,12 +53,17 @@ public class Scoreboard {
 	}
 	
 	public void setValue(int id, int value) {
-		assert id <= numCounters;
+		assert id < numCounters;
 		
 		counters[id] = value;
 		screen.erase(counterIds[id], id, 1);
 		counterIds[id] = screen.registerGelem(new StringGelem(Integer.toString(counters[id]), Color.black));
 		screen.draw(counterIds[id], id, 1);
+	}
+	
+	public int getValue(int id) {
+		assert id < numCounters;
+		return counters[id];
 	}
 	
 	public int numCounters() {

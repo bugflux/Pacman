@@ -6,13 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.bugflux.pacman.entities.Bonus;
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.Controllable.Team;
+import org.bugflux.pacman.entities.Scorekeeper;
 import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.World;
 
-import pt.ua.gboard.CharGelem;
 import pt.ua.gboard.FilledGelem;
 import pt.ua.gboard.GBoard;
 
@@ -31,28 +32,30 @@ public class Map implements World {
 	protected final int mapLayer = 0;
 	protected final int graveYardLayer = mapLayer + 1;
 	protected final int beanLayer = graveYardLayer + 1;
-	protected final int walkerLayer = beanLayer + 1;
+	protected final int bonusLayer = beanLayer + 1;
+	protected final int walkerLayer = bonusLayer + 1;
 
 	protected final int numLayers = walkerLayer + 1;
 
 	protected final int wallGelemId;
 	protected final int backgroundGelemId;
-	
-	protected final Scoreboard scoreboard;
+
+	protected final Scorekeeper scoreboard;
 	protected final HashMap<Collector, Integer> scoreWalkersId;
 	protected int scoreBeanId;
-	
+
+	protected final HashMap<Bonus, Collector> activeBonuses;
+	protected final HashMap<Bonus, Coord> bonuses;
+	protected final int bonusMap[][];
+
 	protected final List<Toggler> togglers;
 	protected boolean isOver;
 
 	/**
-	 * .
-	 * A char map is a 2D char array. Each position contains:
-	 *  - '.' for bean position
-	 *  - 0 for walkable area
-	 *  - anything else for wall
+	 * . A char map is a 2D char array. Each position contains: - '.' for bean
+	 * position - 0 for walkable area - anything else for wall
 	 */
-	public Map(char map[][]) {
+	public Map(char map[][], Scorekeeper scoreboard) {
 		assert map != null;
 		assert map.length > 0 && map[0].length > 0;
 
@@ -60,10 +63,13 @@ public class Map implements World {
 		this.map = new PositionType[map.length][map[0].length];
 		gelemIdMap = new int[height()][width()];
 		walkersMap = new int[height()][width()];
+		bonusMap = new int[height()][width()];
 		beanMap = new int[height()][width()];
 
 		walkers = new HashMap<Controllable, Coord>();
 		scoreWalkersId = new HashMap<Collector, Integer>();
+		bonuses = new HashMap<Bonus, Coord>();
+		activeBonuses = new HashMap<Bonus, Collector>();
 		togglers = new ArrayList<Toggler>();
 		isOver = false;
 
@@ -72,40 +78,81 @@ public class Map implements World {
 		// the third layer is for correct path marking
 		screen = GBoard.init("Pac-Man", height(), width(), 30, 30, numLayers);
 
-		backgroundGelemId = screen.registerGelem(new FilledGelem(Color.black, 100.0));
+		backgroundGelemId = screen.registerGelem(new FilledGelem(Color.black,
+				100.0));
 		wallGelemId = screen.registerGelem(new WallGelem());
 		int beanGelemId = screen.registerGelem(new BeanGelem());
-		for(int r = 0; r < height(); r++) {
-			for(int c = 0; c < width(); c++) {
-				switch(map[r][c]) {
-					case '.':
-						//this.map[r][c] = POSITION_TYPE.HALL;
+		for (int r = 0; r < height(); r++) {
+			for (int c = 0; c < width(); c++) {
+				switch (map[r][c]) {
+				case '.':
+					// this.map[r][c] = POSITION_TYPE.HALL;
 
-						beanMap[r][c] = beanGelemId;
-						screen.draw(beanMap[r][c], r, c, beanLayer);
-						remainingBeans++;
-						//break;
+					beanMap[r][c] = beanGelemId;
+					screen.draw(beanMap[r][c], r, c, beanLayer);
+					remainingBeans++;
+					// break;
 
-					case 0:
-						this.map[r][c] = PositionType.HALL;
-						gelemIdMap[r][c] = backgroundGelemId;
-						screen.draw(gelemIdMap[r][c], r, c, mapLayer);
-						break;
+				case 0:
+					this.map[r][c] = PositionType.HALL;
+					gelemIdMap[r][c] = backgroundGelemId;
+					screen.draw(gelemIdMap[r][c], r, c, mapLayer);
+					break;
 
-					default:
-						this.map[r][c] = PositionType.WALL;
+				default:
+					this.map[r][c] = PositionType.WALL;
 
-						gelemIdMap[r][c] = wallGelemId;
-						screen.draw(gelemIdMap[r][c], r, c, mapLayer);
+					gelemIdMap[r][c] = wallGelemId;
+					screen.draw(gelemIdMap[r][c], r, c, mapLayer);
 
-						break;
+					break;
 				}
 			}
 		}
 
-		scoreboard = new Scoreboard();
+		this.scoreboard = scoreboard;
 		scoreBeanId = scoreboard.addCounter(new BeanGelem(), remainingBeans);
-		// can't call "remainingBeans()" method because of circular dependency for "isOver()"
+		// can't call "remainingBeans()" method because of circular dependency
+		// for "isOver()"
+	}
+
+	@Override
+	public void addBonus(Bonus b, Coord c) {
+		assert !isOver();
+		assert isFree(c);
+		assert !hasBonus(c);
+		assert !bonuses.containsKey(b);
+		assert !activeBonuses.containsKey(b);
+		assert isHall(c);
+
+		bonusMap[c.r()][c.c()] = screen.registerGelem(b.gelem());
+		screen.draw(bonusMap[c.r()][c.c()], c.r(), c.c(), bonusLayer);
+
+		bonuses.put(b, c);
+	}
+
+	// erases from the screen and removes from "bonuses". doesn't promote to "activeBonuses".
+	private void eraseBonus(Bonus b) {
+		assert bonuses.containsKey(b) || activeBonuses.containsKey(b);
+
+		Coord c = bonuses.get(b);
+		screen.erase(bonusMap[c.r()][c.c()], c.r(), c.c(), bonusLayer);
+		bonusMap[c.r()][c.c()] = 0;
+
+		bonuses.remove(b);
+	}
+
+	@Override
+	public void removeBonus(Bonus b) {
+		if(bonuses.containsKey(b)) {
+			eraseBonus(b);
+			return;
+		}
+		else if(activeBonuses.containsKey(b)){
+			activeBonuses.remove(b);
+			return;
+		}
+		assert false; // precondition!
 	}
 
 	@Override
@@ -117,11 +164,11 @@ public class Map implements World {
 		togglers.add(t);
 	}
 
- 	@Override
+	@Override
 	public void addWalker(Collector w, Coord c) {
- 		assert !isOver();
+		assert !isOver();
 		internalAddWalker(w, c);
-		
+
 		scoreWalkersId.put(w, scoreboard.addCounter(w.gelem(), w.energy()));
 	}
 
@@ -130,21 +177,21 @@ public class Map implements World {
 		assert !isOver();
 		internalAddWalker(w, c);
 	}
-	
+
 	private void internalAddWalker(Controllable w, Coord c) {
 		assert !walkers.containsKey(w);
 		assert isHall(c) && isFree(c);
 
-		if(hasBean(c)) {
+		if (hasBean(c)) {
 			removeBean(c);
 		}
 
 		walkersMap[c.r()][c.c()] = screen.registerGelem(w.gelem());
 		screen.draw(walkersMap[c.r()][c.c()], c.r(), c.c(), walkerLayer);
-		
+
 		walkers.put(w, c);
 	}
-	
+
 	@Override
 	public Coord position(Controllable w) {
 		assert !isOver();
@@ -167,46 +214,45 @@ public class Map implements World {
 	private Coord move(Controllable w, Direction d, boolean collect) {
 		assert walkers.containsKey(w);
 		assert !w.isDead();
-		
-		Coord oldC = walkers.get(w); //w.getCoord();
+
+		Coord oldC = walkers.get(w); // w.getCoord();
 		Coord c = newCoord(oldC, d);
 
 		assert isHall(c);
-		
-		if(isFree(c)) {
+
+		if (isFree(c)) {
 			// TODO this is temporary inconsistency!
 			walkers.put(w, c); // replace the walkers coordinates before collecting!
 
-			if(collect) {
-				Collector guy = (Collector)w;
+			if (collect) {
+				Collector guy = (Collector) w;
 				collect(guy);
 				guy.looseEnergy(1);
 				scoreboard.setValue(scoreWalkersId.get(w), guy.energy());
 			}
 
 			walkersMap[c.r()][c.c()] = walkersMap[oldC.r()][oldC.c()];
-			screen.move(walkersMap[oldC.r()][oldC.c()], oldC.r(), oldC.c(), walkerLayer, c.r(), c.c(), walkerLayer);
+			screen.move(walkersMap[oldC.r()][oldC.c()], oldC.r(), oldC.c(),
+					walkerLayer, c.r(), c.c(), walkerLayer);
 			walkersMap[oldC.r()][oldC.c()] = 0;
-			
-			if(collect) {
-				Collector guy = (Collector)w;
-				if(guy.isDead()) {
+
+			if (collect) {
+				Collector guy = (Collector) w;
+				if (guy.isDead()) {
 					killWalker(guy);
 				}
 			}
 
 			return c;
-		}
-		else { // collision!
-			// TODO kill must actually kill
+		} else { // collision!
+					// TODO kill must actually kill
 			Controllable contr = getControllable(c);
-			if(contr.team() != w.team()) {
+			if (contr.team() != w.team()) {
 				// the good one dies.
-				if(w.team() == Team.GOOD) {
+				if (w.team() == Team.GOOD) {
 					w.die();
 					killWalker(w);
-				}
-				else {
+				} else {
 					contr.die();
 					killWalker(contr);
 				}
@@ -222,23 +268,24 @@ public class Map implements World {
 		assert w.isDead();
 
 		Coord c = walkers.get(w);
-		
+
 		screen.erase(walkersMap[c.r()][c.c()], c.r(), c.c(), walkerLayer);
 		walkersMap[c.r()][c.c()] = 0;
-		screen.draw(screen.registerGelem(w.gelem()), c.r(), c.c(), graveYardLayer);
-		
+		screen.draw(screen.registerGelem(w.gelem()), c.r(), c.c(),
+				graveYardLayer);
+
 		Team t = w.team();
 		walkers.remove(w);
-		
+
 		// check if it's the last for this team.
-		for(Controllable x : walkers.keySet()) {
-			if(x.team() == t) {
+		for (Controllable x : walkers.keySet()) {
+			if (x.team() == t) {
 				return;
 			}
 		}
-		
+
 		// it was, so game over!
-		cleanup();
+		cleanup(false);
 	}
 
 	private Controllable getControllable(Coord c) {
@@ -246,12 +293,12 @@ public class Map implements World {
 		assert walkers.containsValue(c);
 		assert !isFree(c);
 
-		for(Entry<Controllable, Coord> x : walkers.entrySet()) {
-			if(x.getValue().equals(c)) {
+		for (Entry<Controllable, Coord> x : walkers.entrySet()) {
+			if (x.getValue().equals(c)) {
 				return x.getKey();
 			}
 		}
-		
+
 		assert false;
 		return null;
 	}
@@ -263,16 +310,29 @@ public class Map implements World {
 		assert !w.isDead();
 
 		Coord c = walkers.get(w);
-		if(hasBean(c)) {
+		if (hasBean(c)) {
 			w.gainEnergy(3);
 			removeBean(c);
+		}
+		
+		if(hasBonus(c)) {
+			Bonus b = null;
+			// could prevent this with yet another map, or an Object type on the existing map.
+			for(Bonus x : bonuses.keySet()) {
+				if(bonuses.get(x).equals(c)) {
+					b = x;
+					break;
+				}
+			}
+			eraseBonus(b);
+			activeBonuses.put(b, w);
 		}
 	}
 
 	@Override
 	public boolean hasCollectable(Coord c) {
 		assert !isOver();
-		return hasBean(c);
+		return hasBean(c) || hasBonus(c);
 	}
 
 	@Override
@@ -282,40 +342,48 @@ public class Map implements World {
 		assert togglers.contains(t);
 		assert canToggle(t, c);
 
-		if(isHall(c)) {
+		if (isHall(c)) {
 			screen.erase(gelemIdMap[c.r()][c.c()], c.r(), c.c(), mapLayer);
 			gelemIdMap[c.r()][c.c()] = wallGelemId;
 			screen.draw(gelemIdMap[c.r()][c.c()], c.r(), c.c(), mapLayer);
 			return map[c.r()][c.c()] = PositionType.WALL;
-		}
-		else { // WALL
+		} else { // WALL
 			screen.erase(gelemIdMap[c.r()][c.c()], c.r(), c.c(), mapLayer);
 			gelemIdMap[c.r()][c.c()] = backgroundGelemId;
 			screen.draw(gelemIdMap[c.r()][c.c()], c.r(), c.c(), mapLayer);
 			return map[c.r()][c.c()] = PositionType.HALL;
 		}
 	}
-	
+
 	@Override
 	public boolean canToggle(Toggler t, Coord c) {
 		assert !isOver();
 		assert togglers.contains(t);
 
-		return isFree(c) && !hasBean(c);
+		return isFree(c) && !hasCollectable(c);
 	}
 
 	@Override
 	public Coord newCoord(Coord oldC, Direction d) {
 		assert !isOver();
 		Coord c = null;
-		switch(d) {
-			case UP:    c = new Coord(oldC.r() - 1, oldC.c()); break;
-			case DOWN:  c = new Coord(oldC.r() + 1, oldC.c()); break;
-			case LEFT:  c = new Coord(oldC.r(), oldC.c() - 1); break;
-			case RIGHT: c = new Coord(oldC.r(), oldC.c() + 1); break;
-			default: assert false;
+		switch (d) {
+		case UP:
+			c = new Coord(oldC.r() - 1, oldC.c());
+			break;
+		case DOWN:
+			c = new Coord(oldC.r() + 1, oldC.c());
+			break;
+		case LEFT:
+			c = new Coord(oldC.r(), oldC.c() - 1);
+			break;
+		case RIGHT:
+			c = new Coord(oldC.r(), oldC.c() + 1);
+			break;
+		default:
+			assert false;
 		}
-		
+
 		return c;
 	}
 
@@ -333,12 +401,19 @@ public class Map implements World {
 
 		return walkersMap[c.r()][c.c()] == 0;
 	}
-	
+
+	@Override
 	public boolean hasBean(Coord c) {
-		assert !isOver();
+		assert validPosition(c);
+
+		return beanMap[c.r()][c.c()] != 0;
+	}
+	
+	@Override
+	public boolean hasBonus(Coord c) {
 		assert validPosition(c);
 		
-		return beanMap[c.r()][c.c()] != 0;
+		return bonusMap[c.r()][c.c()] != 0;
 	}
 
 	public int remainingBeans() {
@@ -349,21 +424,27 @@ public class Map implements World {
 	protected void removeBean(Coord c) {
 		assert !isOver();
 		assert hasBean(c);
-		
+
 		screen.erase(beanMap[c.r()][c.c()], c.r(), c.c(), beanLayer);
 		beanMap[c.r()][c.c()] = 0;
 		remainingBeans--;
 		scoreboard.setValue(scoreBeanId, remainingBeans());
-		
-		if(remainingBeans() == 0) {
-			cleanup();
+
+		if (remainingBeans() == 0) {
+			cleanup(true);
 		}
 	}
-	
-	protected void cleanup() {
+
+	protected void cleanup(boolean win) {
 		isOver = true;
+		if(win) {
+			win();
+		}
+		else {
+			lose();
+		}
 	}
-	
+
 	@Override
 	public PositionType positionType(Coord c) {
 		assert !isOver();
@@ -375,33 +456,53 @@ public class Map implements World {
 	@Override
 	public boolean validPosition(Coord c) {
 		assert !isOver();
-		return c.r() >= 0 && c.r() < height()
-				&& c.c() >= 0 && c.c() < width();
+		return c.r() >= 0 && c.r() < height() && c.c() >= 0 && c.c() < width();
 	}
 
 	@Override
 	public int height() {
-//		assert !isOver();
+		// assert !isOver();
 		return map.length;
 	}
 
 	@Override
 	public int width() {
-//		assert !isOver();
+		// assert !isOver();
 		return map[0].length;
 	}
-	
+
 	public GBoard getGBoard() {
 		assert !isOver();
 		return screen;
 	}
+	
+	public Scorekeeper getScorekeeper() {
+		assert !isOver();
+		return scoreboard;
+	}
 
 	@Override
 	public boolean isOver() {
-		if(!screen.isShowing() || !scoreboard.isShowing()) {
+		if (!screen.isShowing() || !scoreboard.isShowing()) {
 			isOver = true;
 		}
 		return isOver;
+	}
+	
+	private void win() {
+		for(int r = 0; r < height(); r++) {
+			for(int c = 0; c < width(); c++) {
+				screen.draw(screen.registerGelem(new FilledGelem(Color.green, 10)), r, c, walkerLayer);
+			}
+		}
+	}
+	
+	private void lose() {
+		for(int r = 0; r < height(); r++) {
+			for(int c = 0; c < width(); c++) {
+				screen.draw(screen.registerGelem(new FilledGelem(Color.red, 10)), r, c, walkerLayer);
+			}
+		}
 	}
 }
 
@@ -411,9 +512,8 @@ class WallGelem extends FilledGelem {
 	}
 }
 
-class BeanGelem extends CharGelem {
+class BeanGelem extends FilledGelem {
 	public BeanGelem() {
-		super('.', Color.yellow);
+		super(Color.yellow, 10);
 	}
 }
-

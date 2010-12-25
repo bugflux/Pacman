@@ -9,7 +9,7 @@ public interface Garden extends Walkable {
 	 * 
 	 * @param c 
 	 */
-	public void collect(Collector c);
+	public abstract void collect(Collector c);
 	
 	/**
 	 * Check if there is something to collect in a position.
@@ -17,11 +17,19 @@ public interface Garden extends Walkable {
 	 * @param c The position's coordinates.
 	 * @return true if there is something to collect, false otherwise.
 	 */
-	public boolean hasCollectable(Coord c);
-	
-	public void addWalker(Collector w, Coord c);
+	public abstract boolean hasCollectable(Coord c);
 	
 	/**
+	 * Special addWalker, adds a collector that interacts with the map.
+	 * 
+	 * @param w The Collector to add.
+	 * @param c The position to place it initially.
+	 */
+	public abstract void addWalker(Collector w, Coord c);
+	
+	/**
+	 * TODO: external sync and collect() outside.
+	 * 
 	 * Special move in a garden. Tries to collect whatever
 	 * is in the destination position beforehand.
 	 * 
@@ -29,5 +37,37 @@ public interface Garden extends Walkable {
 	 * @param d The direction to move in.
 	 * @return the final coordinates of the collector in the map.
 	 */
-	public Coord move(Collector w, Direction d);
+	public abstract Coord move(Collector w, Direction d);
+	
+	/**
+	 * Place a Bonus in this map.
+	 * 
+	 * @param b The Bonus to place.
+	 * @param c The position to place the Bonus in. 
+	 */
+	public abstract void addBonus(Bonus b, Coord c);
+	
+	/**
+	 * Remove a bonus from the map. The bonus can't disappear by himself because
+	 * that would require a synch block on Bonuses for all methods on the Garden.
+	 * 
+	 * @param b The Bonus to remove.
+	 */
+	public abstract void removeBonus(Bonus b);
+	
+	/**
+	 * Check if there's a Bonus in a given position.
+	 * 
+	 * @param c The coordinates of the position to check for Bonus.
+	 * @return true if there's a Bonus in that position, false otherwise.
+	 */
+	public abstract boolean hasBonus(Coord c);
+	
+	/**
+	 * Check if there's a Bean in a given position.
+	 * 
+	 * @param c The coordinates of the position to check for Bean.
+	 * @return true if there's a Bean in that position, false otherwise.
+	 */
+	public abstract boolean hasBean(Coord c);
 }

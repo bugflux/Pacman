@@ -9,10 +9,10 @@ import org.bugflux.pacman.entities.Walkable.Direction;
 public class Pacman extends Walker implements Collector {
 	protected int energy;
 	protected Garden w;
-
+	
 	public Pacman(Garden w) {
 		super(w, new _PacmanGelem(Color.yellow), Team.GOOD);
-		this.w = w;
+		this.w = w; // needed to benefit from polymorphism { move(Collector) is present in Garden, not Walkable }
 		energy = 10;
 	}
 

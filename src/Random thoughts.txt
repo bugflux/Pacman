@@ -47,3 +47,24 @@ guardada no mapa, e não em cada um!!
 23 Dez
 Mandar o tryToggle para baixo, não fazer o try no input! Ou então ao contrário.
 Mas manter coerência entre o toggle e o move!
+
+---
+O Pacman apanha um bónus que pode usar apenas quando entender. Os bónus que um pacman
+possua conferem-lhe determiandas propriedades. Não pode possuir mais do que um bónus
+num dado instante.
+
+Propriedades:
+Invincible
+Freeze villains.
+////
+
+24 Dez
+O Mapa é o ponto central de sincronismo. Se as operações que alteram o Scoreboard,
+por exemplo, estiverem em synch com o Mapa, não é preciso fazer synch do scoreboard!
+
+
+///
+25 Dez
+O Bonus é adicionado ao mapa e está activo por um certo período de tempo. Quando é
+inserido no mapa, já está activo e com essa mesma validade, mas só beneficia alguém
+que o alcance, e pelo tempo restante na validade!!

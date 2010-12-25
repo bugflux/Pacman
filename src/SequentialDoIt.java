@@ -12,6 +12,7 @@ import org.bugflux.pacman.Pacman;
 import org.bugflux.pacman.Phantom;
 import org.bugflux.pacman.Phantom.Guy;
 import org.bugflux.pacman.PositionToggler;
+import org.bugflux.pacman.Scoreboard;
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.input.KeyboardMover;
 import org.bugflux.pacman.input.MousePositionToggler;
@@ -24,7 +25,7 @@ public class SequentialDoIt {
 			System.exit(-1);
 		}
 
-		Map m = new Map(readLabyrinth(args[0]));
+		Map m = new Map(readLabyrinth(args[0]), new Scoreboard());
 
 		Collector p = new Pacman(m);
 		m.addWalker(p, new Coord(1, 1));

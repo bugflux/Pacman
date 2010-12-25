@@ -7,7 +7,7 @@ public interface Collector extends Controllable {
 	 * @param amount The energy amount.
 	 * @return The resulting amount of energy.
 	 */
-	public int gainEnergy(int amount);
+	public abstract int gainEnergy(int amount);
 
 	/**
 	 * Loose a certain amount of energy, based on the action performed.
@@ -15,12 +15,12 @@ public interface Collector extends Controllable {
 	 * @param amount The energy amount.
 	 * @return The resulting amount of energy.
 	 */
-	public int looseEnergy(int amount);
+	public abstract int looseEnergy(int amount);
 	
 	/**
 	 * Get the current amount of energy for this Collector.
 	 * 
 	 * @return The energy amount.
 	 */
-	public int energy();
+	public abstract int energy();
 }
