@@ -68,7 +68,7 @@ public class MonitorDoIt {
 		Toggler _phantomDoor = new PositionToggler(map);
 		map.addPositionToggler(_phantomDoor);
 		AutomaticDoorman phantomDoor= new AutomaticDoorman(map, _phantomDoor, new Coord(6, 10), 3000, 2000);
-//		phantomDoor.start();
+		phantomDoor.start();
 
 		Toggler _mouseToggler = new PositionToggler(map);
 		map.addPositionToggler(_mouseToggler);

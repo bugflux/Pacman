@@ -23,6 +23,8 @@ public class Scoreboard implements Scorekeeper {
 	protected int lastCounterId;
 
 	public Scoreboard(int maxCounters) {
+		assert maxCounters > 1;
+
 		lastCounterId = 0;
 		this.maxCounters = maxCounters;
 		counters = new HashMap<Integer, Score>();
@@ -31,6 +33,7 @@ public class Scoreboard implements Scorekeeper {
 
 	@Override
 	public int addCounter(Gelem gid, int initialValue) {
+		assert counters.size() < maxCounters;
 		lastCounterId++;
 
 		int gelemId = screen.registerGelem(gid);
@@ -57,6 +60,7 @@ public class Scoreboard implements Scorekeeper {
 	@Override
 	public int getValue(int id) {
 		assert counters.containsKey(id);
+
 		return counters.get(id).value;
 	}
 	
@@ -68,6 +72,7 @@ public class Scoreboard implements Scorekeeper {
 	@Override
 	public void removeCounter(int id) {
 		assert counters.containsKey(id);
+
 		Score it = counters.get(id);
 		int itsIndex = it.index;
 		
@@ -87,6 +92,7 @@ public class Scoreboard implements Scorekeeper {
 	}
 }
 
+// just a tuple
 class Score {
 	protected Gelem gelem;
 	protected int value;
