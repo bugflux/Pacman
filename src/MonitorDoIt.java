@@ -75,8 +75,14 @@ public class MonitorDoIt {
 		MousePositionToggler toggler = new MousePositionToggler(map, new MonitorPositionToggler(_mouseToggler), _map.getGBoard());
 		_map.getGBoard().addMouseListener(toggler);
 		
-		AutomaticBonusPlacer abp = new AutomaticBonusPlacer(map, 5000, 10000, score);
-		abp.start();
+		AutomaticBonusPlacer abp1 = new AutomaticBonusPlacer(map, 5000, 10000, score);
+		abp1.start();
+		
+		AutomaticBonusPlacer abp2 = new AutomaticBonusPlacer(map, 1000, 5000, score);
+		abp2.start();
+		
+		AutomaticBonusPlacer abp3 = new AutomaticBonusPlacer(map, 1500, 5000, score);
+		abp3.start();
 		
 		controller2.join();
 		controller3.join();

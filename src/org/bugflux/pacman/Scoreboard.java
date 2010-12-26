@@ -17,26 +17,21 @@ import pt.ua.gboard.StringGelem;
  *
  */
 public class Scoreboard implements Scorekeeper {
-	protected GBoard screen;
-	protected int lastCounterId;
+	protected final GBoard screen;
 	protected final HashMap<Integer, Score> counters;
 	protected final int maxCounters;
+	protected int lastCounterId;
 
 	public Scoreboard(int maxCounters) {
 		lastCounterId = 0;
 		this.maxCounters = maxCounters;
 		counters = new HashMap<Integer, Score>();
+		screen = GBoard.init("Scoreboard", maxCounters, 2, 50, 50);
 	}
 
 	@Override
 	public int addCounter(Gelem gid, int initialValue) {
-		lastCounterId ++;
-
-		if(screen != null) {
-			screen.terminate();
-		}
-		screen = GBoard.init("Scoreboard", counters.size() + 1, 2, 50, 50);
-		redraw();
+		lastCounterId++;
 
 		int gelemId = screen.registerGelem(gid);
 		int valueId = screen.registerGelem(new StringGelem(Integer.toString(initialValue), Color.black));
@@ -65,17 +60,6 @@ public class Scoreboard implements Scorekeeper {
 		return counters.get(id).value;
 	}
 	
-	private void redraw() {
-		int r = 0;
-		for(Entry<Integer, Score> s : counters.entrySet()) {
-			Score x = s.getValue();
-			x.valueId = screen.registerGelem(new StringGelem(Integer.toString(x.value), Color.black));
-			screen.draw(screen.registerGelem(x.gelem), x.index, 0);
-			screen.draw(x.valueId, x.index, 1);
-			r++;
-		}
-	}
-	
 	@Override
 	public boolean isShowing() {
 		return screen.isShowing();
@@ -84,8 +68,11 @@ public class Scoreboard implements Scorekeeper {
 	@Override
 	public void removeCounter(int id) {
 		assert counters.containsKey(id);
-		int itsIndex = counters.get(id).index;
+		Score it = counters.get(id);
+		int itsIndex = it.index;
 		
+		screen.erase(screen.gelemID(it.gelem), it.index, 0);
+		screen.erase(it.valueId, it.index, 1);
 		counters.remove(id);
 		for(Entry<Integer, Score> s : counters.entrySet()) {
 			Score x = s.getValue();
@@ -97,9 +84,6 @@ public class Scoreboard implements Scorekeeper {
 				screen.draw(x.valueId, x.index, 1);
 			}
 		}
-		screen.terminate();
-		screen = GBoard.init("Scoreboard", counters.size(), 2, 50, 50);
-		redraw();
 	}
 }
 
