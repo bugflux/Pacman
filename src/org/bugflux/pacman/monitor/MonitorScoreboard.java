@@ -24,12 +24,17 @@ public class MonitorScoreboard implements Scorekeeper {
 	}
 
 	@Override
-	public synchronized int numCounters() {
-		return b.numCounters();
+	public synchronized boolean isShowing() {
+		return b.isShowing();
 	}
 
 	@Override
-	public synchronized boolean isShowing() {
-		return b.isShowing();
+	public void removeCounter(int id) {
+		b.removeCounter(id);
+	}
+
+	@Override
+	public int getValue(int id) {
+		return b.getValue(id);
 	}
 }

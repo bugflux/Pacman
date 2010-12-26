@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import org.bugflux.pacman.entities.Bonus;
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
+import org.bugflux.pacman.entities.Bonus.Property;
 import org.bugflux.pacman.entities.Controllable.Team;
 import org.bugflux.pacman.entities.Scorekeeper;
 import org.bugflux.pacman.entities.Toggler;
@@ -215,12 +216,21 @@ public class Map implements World {
 		assert walkers.containsKey(w);
 		assert !w.isDead();
 
-		Coord oldC = walkers.get(w); // w.getCoord();
-		Coord c = newCoord(oldC, d);
+		Coord oldC = walkers.get(w);
+		
+		// if a "FreezeOpposing" is active for a team opposite
+		// of this Controllable, don't move it!
+		for(Bonus b : activeBonuses.keySet()) {
+			if(b.property() == Property.FreezeOpposing &&
+					activeBonuses.get(b).team() != w.team()) {
+				return oldC;
+			}
+		}
 
+		Coord c = newCoord(oldC, d);
 		assert isHall(c);
 
-		if (isFree(c)) {
+		if(isFree(c)) {
 			// TODO this is temporary inconsistency!
 			walkers.put(w, c); // replace the walkers coordinates before collecting!
 
@@ -244,11 +254,20 @@ public class Map implements World {
 			}
 
 			return c;
-		} else { // collision!
-					// TODO kill must actually kill
+		}
+		else { // collision!
 			Controllable contr = getControllable(c);
-			if (contr.team() != w.team()) {
+			
+			if(contr.team() != w.team()) {
 				// the good one dies.
+				// if either has "Invincibility, don't lose!
+				for(Bonus b : activeBonuses.keySet()) {
+					if(b.property() == Property.Invincible
+							&& (activeBonuses.get(b).equals(contr) || activeBonuses.get(b).equals(w))) {
+						return oldC;
+					}
+				}
+
 				if (w.team() == Team.GOOD) {
 					w.die();
 					killWalker(w);
@@ -310,14 +329,11 @@ public class Map implements World {
 		assert !w.isDead();
 
 		Coord c = walkers.get(w);
-		if (hasBean(c)) {
-			w.gainEnergy(3);
-			removeBean(c);
-		}
 		
 		if(hasBonus(c)) {
 			Bonus b = null;
-			// could prevent this with yet another map, or an Object type on the existing map.
+			// could prevent this reverse-lookup with yet another map,
+			// or an Object type on the existing map.
 			for(Bonus x : bonuses.keySet()) {
 				if(bonuses.get(x).equals(c)) {
 					b = x;
@@ -326,6 +342,11 @@ public class Map implements World {
 			}
 			eraseBonus(b);
 			activeBonuses.put(b, w);
+		}
+		
+		if (hasBean(c)) {
+			w.gainEnergy(3);
+			removeBean(c);
 		}
 	}
 
@@ -476,6 +497,7 @@ public class Map implements World {
 		return screen;
 	}
 	
+	@Override
 	public Scorekeeper getScorekeeper() {
 		assert !isOver();
 		return scoreboard;
@@ -490,17 +512,19 @@ public class Map implements World {
 	}
 	
 	private void win() {
+		int gelemId = screen.registerGelem(new FilledGelem(Color.green, 10));
 		for(int r = 0; r < height(); r++) {
 			for(int c = 0; c < width(); c++) {
-				screen.draw(screen.registerGelem(new FilledGelem(Color.green, 10)), r, c, walkerLayer);
+				screen.draw(gelemId, r, c, numLayers-1);
 			}
 		}
 	}
 	
 	private void lose() {
+		int gelemId = screen.registerGelem(new FilledGelem(Color.red, 10));
 		for(int r = 0; r < height(); r++) {
 			for(int c = 0; c < width(); c++) {
-				screen.draw(screen.registerGelem(new FilledGelem(Color.red, 10)), r, c, walkerLayer);
+				screen.draw(gelemId, r, c, numLayers-1);
 			}
 		}
 	}

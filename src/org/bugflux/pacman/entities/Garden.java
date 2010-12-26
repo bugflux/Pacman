@@ -70,4 +70,11 @@ public interface Garden extends Walkable {
 	 * @return true if there's a Bean in that position, false otherwise.
 	 */
 	public abstract boolean hasBean(Coord c);
+	
+	/**
+	 * Get the Scorekeeper for this garden.
+	 * 
+	 * @return the Scorekeeper instance.
+	 */
+	public abstract Scorekeeper getScorekeeper();
 }

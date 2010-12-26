@@ -13,6 +13,13 @@ public interface Scorekeeper {
 	public abstract int addCounter(Gelem gid, int initialValue);
 	
 	/**
+	 * Remove a counter from the scorekeeping.
+	 * 
+	 * @param id The counter to remove.
+	 */
+	public abstract void removeCounter(int id);
+	
+	/**
 	 * Sets a new score value for a score.
 	 * 
 	 * @param id The score to set.
@@ -21,11 +28,12 @@ public interface Scorekeeper {
 	public abstract void setValue(int id, int value);
 	
 	/**
-	 * Get the amount of scores kept by this keeper.
+	 * Gets a score value for a score.
 	 * 
-	 * @return
+	 * @param id The score to get.
+	 * @return The value of that score.
 	 */
-	public abstract int numCounters();
+	public abstract int getValue(int id);
 	
 	/**
 	 * Check whether this keeper is still active.

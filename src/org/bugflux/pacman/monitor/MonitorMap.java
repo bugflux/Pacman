@@ -4,6 +4,7 @@ import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.entities.Bonus;
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
+import org.bugflux.pacman.entities.Scorekeeper;
 import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.World;
 
@@ -123,5 +124,10 @@ public class MonitorMap extends Thread implements World {
 	@Override
 	public synchronized boolean hasBean(Coord c) {
 		return m.hasBean(c);
+	}
+	
+	@Override
+	public synchronized Scorekeeper getScorekeeper() {
+		return m.getScorekeeper();
 	}
 }

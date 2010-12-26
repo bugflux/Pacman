@@ -25,7 +25,7 @@ public class SequentialDoIt {
 			System.exit(-1);
 		}
 
-		Map m = new Map(readLabyrinth(args[0]), new Scoreboard());
+		Map m = new Map(readLabyrinth(args[0]), new Scoreboard(5));
 
 		Collector p = new Pacman(m);
 		m.addWalker(p, new Coord(1, 1));

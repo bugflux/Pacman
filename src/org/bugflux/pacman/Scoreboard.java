@@ -1,6 +1,8 @@
 package org.bugflux.pacman;
 
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.bugflux.pacman.entities.Scorekeeper;
 
@@ -16,69 +18,101 @@ import pt.ua.gboard.StringGelem;
  */
 public class Scoreboard implements Scorekeeper {
 	protected GBoard screen;
-	protected int numCounters;
-	protected int counters[];
-	protected int counterIds[];
-	protected Gelem gelems[];
+	protected int lastCounterId;
+	protected final HashMap<Integer, Score> counters;
+	protected final int maxCounters;
 
-	public Scoreboard() {
-		numCounters = 0;
-//		counters = new int[numCounters];
-//		gelems = new Gelem[numCounters];
-//		counterIds = new int[numCounters];
+	public Scoreboard(int maxCounters) {
+		lastCounterId = 0;
+		this.maxCounters = maxCounters;
+		counters = new HashMap<Integer, Score>();
 	}
-	
+
+	@Override
 	public int addCounter(Gelem gid, int initialValue) {
-		numCounters ++;
-		// update scores
-		int tmpCounters[] = new int[numCounters];
-		Gelem tmpGelems[] = new Gelem[numCounters];
-		counterIds = new int[numCounters];
-		
-		if(numCounters() > 1) { // not the first time
-			System.arraycopy(counters, 0, tmpCounters, 0, counters.length);
-			System.arraycopy(gelems, 0, tmpGelems, 0, gelems.length);
+		lastCounterId ++;
+
+		if(screen != null) {
 			screen.terminate();
 		}
-		tmpGelems[tmpGelems.length - 1] = gid;
-		tmpCounters[tmpCounters.length - 1] = initialValue;
-		counters = tmpCounters;
-		gelems = tmpGelems;
-
-		screen = GBoard.init("Scoreboard", numCounters, 2, 200, 200);
+		screen = GBoard.init("Scoreboard", counters.size() + 1, 2, 50, 50);
 		redraw();
+
+		int gelemId = screen.registerGelem(gid);
+		int valueId = screen.registerGelem(new StringGelem(Integer.toString(initialValue), Color.black));
+		screen.draw(gelemId, counters.size(), 0);
+		screen.draw(valueId, counters.size(), 1);
 		
-		
-		return numCounters - 1;
+		counters.put(lastCounterId, new Score(gid, initialValue, valueId, counters.size()));
+
+		return lastCounterId;
 	}
 	
+	@Override
 	public void setValue(int id, int value) {
-		assert id < numCounters;
+		assert counters.containsKey(id);
 		
-		counters[id] = value;
-		screen.erase(counterIds[id], id, 1);
-		counterIds[id] = screen.registerGelem(new StringGelem(Integer.toString(counters[id]), Color.black));
-		screen.draw(counterIds[id], id, 1);
+		Score sc = counters.get(id);
+		sc.value = value;
+		screen.erase(sc.valueId, sc.index, 1);
+		sc.valueId = screen.registerGelem(new StringGelem(Integer.toString(sc.value), Color.black));
+		screen.draw(sc.valueId, sc.index, 1);
 	}
 	
+	@Override
 	public int getValue(int id) {
-		assert id < numCounters;
-		return counters[id];
-	}
-	
-	public int numCounters() {
-		return numCounters;
+		assert counters.containsKey(id);
+		return counters.get(id).value;
 	}
 	
 	private void redraw() {
-		for(int r = 0; r < numCounters(); r++) {
-			screen.draw(screen.registerGelem(gelems[r]), r, 0);
-			counterIds[r] = screen.registerGelem(new StringGelem(Integer.toString(counters[r]), Color.black));
-			screen.draw(counterIds[r], r, 1);
+		int r = 0;
+		for(Entry<Integer, Score> s : counters.entrySet()) {
+			Score x = s.getValue();
+			x.valueId = screen.registerGelem(new StringGelem(Integer.toString(x.value), Color.black));
+			screen.draw(screen.registerGelem(x.gelem), x.index, 0);
+			screen.draw(x.valueId, x.index, 1);
+			r++;
 		}
 	}
 	
+	@Override
 	public boolean isShowing() {
 		return screen.isShowing();
+	}
+
+	@Override
+	public void removeCounter(int id) {
+		assert counters.containsKey(id);
+		int itsIndex = counters.get(id).index;
+		
+		counters.remove(id);
+		for(Entry<Integer, Score> s : counters.entrySet()) {
+			Score x = s.getValue();
+			if(x.index > itsIndex) {
+				screen.erase(screen.gelemID(x.gelem), x.index, 0);
+				screen.erase(x.valueId, x.index, 1);
+				x.index--;
+				screen.draw(screen.gelemID(x.gelem), x.index, 0);
+				screen.draw(x.valueId, x.index, 1);
+			}
+		}
+		screen.terminate();
+		screen = GBoard.init("Scoreboard", counters.size(), 2, 50, 50);
+		redraw();
+	}
+}
+
+class Score {
+	protected Gelem gelem;
+	protected int value;
+	protected int valueId;
+	protected int index;
+
+	public Score(Gelem gelem, int value, int valueId, int index) {
+		this.gelem = gelem;
+		this.value = value;
+		this.valueId = valueId;
+		this.index = index;
 	}
 }
