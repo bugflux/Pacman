@@ -4,7 +4,7 @@ import org.bugflux.pacman.entities.Bonus;
 
 import pt.ua.gboard.Gelem;
 
-public class MonitorBonus extends Thread implements Bonus {
+public class MonitorBonus implements Bonus {
 	protected final Bonus b;
 	
 	public MonitorBonus(Bonus b) {

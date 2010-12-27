@@ -8,10 +8,10 @@ import org.bugflux.pacman.entities.Scorekeeper;
 import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.World;
 
-public class MonitorMap implements World {
+public class MetronomeMap extends Thread implements World {
 	protected final World m;
 
-	public MonitorMap(World m) {
+	public MetronomeMap(World m) {
 		this.m = m;
 	}
 
