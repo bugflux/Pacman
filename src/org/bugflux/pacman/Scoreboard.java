@@ -1,6 +1,8 @@
 package org.bugflux.pacman;
 
 import java.awt.Color;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -16,20 +18,31 @@ import pt.ua.gboard.StringGelem;
  * @author ndray
  *
  */
-public class Scoreboard implements Scorekeeper {
+public class Scoreboard implements Scorekeeper, WindowListener {
 	protected final GBoard screen;
 	protected final HashMap<Integer, Score> counters;
 	protected final int maxCounters;
 	protected int lastCounterId;
+	protected boolean isOver;
 
 	public Scoreboard(int maxCounters) {
 		assert maxCounters > 1;
 
+		isOver = false;
 		lastCounterId = 0;
 		this.maxCounters = maxCounters;
 		counters = new HashMap<Integer, Score>();
 		screen = GBoard.init("Scoreboard", maxCounters, 2, 50, 50);
+		screen.frame().addWindowListener(this);
 	}
+	
+	@Override public void windowOpened(WindowEvent e) {}
+	@Override public void windowClosing(WindowEvent e) { isOver = true; }
+	@Override public void windowClosed(WindowEvent e) {}
+	@Override public void windowIconified(WindowEvent e) {}
+	@Override public void windowDeiconified(WindowEvent e) {}
+	@Override public void windowActivated(WindowEvent e) {}
+	@Override public void windowDeactivated(WindowEvent e) {}
 
 	@Override
 	public int addCounter(Gelem gid, int initialValue) {
@@ -65,8 +78,8 @@ public class Scoreboard implements Scorekeeper {
 	}
 	
 	@Override
-	public boolean isShowing() {
-		return screen.isShowing();
+	public boolean isOver() {
+		return isOver;
 	}
 
 	@Override

@@ -39,5 +39,5 @@ public interface Scorekeeper {
 	 * Check whether this keeper is still active.
 	 * @return
 	 */
-	public abstract boolean isShowing();
+	public abstract boolean isOver();
 }

@@ -19,5 +19,5 @@ public abstract class SharedScoreboard implements Scorekeeper {
 	public abstract int getValue(int id);
 
 	@Override
-	public abstract boolean isShowing();
+	public abstract boolean isOver();
 }

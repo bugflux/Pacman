@@ -30,6 +30,7 @@ public class MonitorDoIt {
 			System.exit(-1);
 		}
 
+		// create
 		Scorekeeper score = new MonitorScoreboard(new Scoreboard(6));
 		Map _map = new Map(SequentialDoIt.readLabyrinth(args[0]), score);
 		SharedMap map = new MonitorMap(_map);
@@ -42,56 +43,55 @@ public class MonitorDoIt {
 		Controllable pacman = new MonitorWalker(_pacman);
 		KeyboardMover controller = new KeyboardMover(map, pacman);
 		_map.getGBoard().addKeyListener(controller);
+
+		Coord coords[] = { new Coord(7, 10), new Coord(7, 11), new Coord(7, 12), new Coord(7, 13) };
+		Guy guys[] = { Guy.Pinky, Guy.Blinky, Guy.Inky, Guy.Clyde };
+		Controllable phantoms[] = new Controllable[coords.length];
+		RandomMover movers[] = new RandomMover[coords.length];
+		int speeds[] = { 87, 175, 250, 500 };
 		
-		Controllable _pinky = new Phantom(map, _map.getGBoard(), Guy.Pinky);
-		map.addWalker(_pinky, new Coord(7, 10));
-		Controllable pinky = new MonitorWalker(_pinky);
-		RandomMover controller2 = new RandomMover(map, pinky, 87);
-		
-		Controllable _blinky = new Phantom(map, _map.getGBoard(), Guy.Blinky);
-		map.addWalker(_blinky, new Coord(7, 11));
-		Controllable blinky = new MonitorWalker(_blinky);
-		RandomMover controller3 = new RandomMover(map, blinky, 175);
-		
-		Controllable _inky = new Phantom(map, _map.getGBoard(), Guy.Inky);
-		map.addWalker(_inky, new Coord(7, 12));
-		Controllable inky = new MonitorWalker(_inky);
-		RandomMover controller4 = new RandomMover(map, inky, 250);
-		
-		Controllable _clyde = new Phantom(map, _map.getGBoard(), Guy.Clyde);
-		map.addWalker(_clyde, new Coord(7, 13));
-		Controllable clyde = new MonitorWalker(_clyde);
-		RandomMover controller5 = new RandomMover(map, clyde, 500);
-		
-		controller2.start();
-		controller3.start();
-		controller4.start();
-		controller5.start();
+		for(int r = 0; r < coords.length; r++) {
+			phantoms[r] = new Phantom(map, _map.getGBoard(), guys[r]);
+			map.addWalker(phantoms[r], coords[r]);
+			phantoms[r] = new MonitorWalker(phantoms[r]);
+			movers[r] = new RandomMover(map, phantoms[r], speeds[r]);
+		}
 		
 		Toggler _phantomDoor = new PositionToggler(map);
 		map.addPositionToggler(_phantomDoor);
 		AutomaticDoorman phantomDoor= new AutomaticDoorman(map, _phantomDoor, new Coord(6, 10), 3000, 2000);
-		phantomDoor.start();
 
 		Toggler _mouseToggler = new PositionToggler(map);
 		map.addPositionToggler(_mouseToggler);
 		MousePositionToggler toggler = new MousePositionToggler(map, new MonitorPositionToggler(_mouseToggler), _map.getGBoard());
+
+		int waitPlace[] = { 5000, 1000, 1500 };
+		int waitActive[] = { 10000, 7000, 7500 };
+		AutomaticBonusPlacer placers[] = new AutomaticBonusPlacer[waitPlace.length];
+		
+		for(int r = 0; r < waitPlace.length; r++) {
+			placers[r] = new AutomaticBonusPlacer(map, waitPlace[r], waitActive[r], score);
+		}
+		
+		// launch
 		_map.getGBoard().addMouseListener(toggler);
-		
-		AutomaticBonusPlacer abp1 = new AutomaticBonusPlacer(map, 5000, 10000, score);
-		abp1.start();
-		
-		AutomaticBonusPlacer abp2 = new AutomaticBonusPlacer(map, 1000, 5000, score);
-		abp2.start();
-		
-		AutomaticBonusPlacer abp3 = new AutomaticBonusPlacer(map, 1500, 5000, score);
-		abp3.start();
-		
-		controller2.join();
-		controller3.join();
-		controller4.join();
-		controller5.join();
+		phantomDoor.start();
+		for(int r = 0; r < coords.length; r++) {
+			movers[r].start();
+		}
+		for(int r = 0; r < waitPlace.length; r++) {
+			placers[r].start();
+		}
+
+		// join
 		phantomDoor.join();
+		for(int r = 0; r < waitPlace.length; r++) {
+			placers[r].join();
+		}
+		for(int r = 0; r < coords.length; r++) {
+			movers[r].join();
+		}
+		_map.getGBoard().removeMouseListener(toggler);
 
 		System.out.println("All is ok");
 	}

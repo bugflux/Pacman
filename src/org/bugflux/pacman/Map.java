@@ -1,6 +1,8 @@
 package org.bugflux.pacman;
 
 import java.awt.Color;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +20,7 @@ import org.bugflux.pacman.entities.World;
 import pt.ua.gboard.FilledGelem;
 import pt.ua.gboard.GBoard;
 
-public class Map implements World {
+public class Map implements World, WindowListener {
 	protected final PositionType map[][];
 
 	// most of this maps are used for faster testing
@@ -113,9 +115,19 @@ public class Map implements World {
 
 		this.scoreboard = scoreboard;
 		scoreBeanId = scoreboard.addCounter(new BeanGelem(), remainingBeans);
+
+		screen.frame().addWindowListener(this);
+		
 		// can't call "remainingBeans()" method because of circular dependency
 		// for "isOver()"
 	}
+	@Override public void windowOpened(WindowEvent e) {}
+	@Override public void windowClosing(WindowEvent e) { isOver = true; }
+	@Override public void windowClosed(WindowEvent e) {}
+	@Override public void windowIconified(WindowEvent e) {}
+	@Override public void windowDeiconified(WindowEvent e) {}
+	@Override public void windowActivated(WindowEvent e) {}
+	@Override public void windowDeactivated(WindowEvent e) {}
 
 	@Override
 	public void addBonus(Bonus b, Coord c) {
@@ -478,7 +490,6 @@ public class Map implements World {
 	}
 
 	public GBoard getGBoard() {
-		assert !isOver();
 		return screen;
 	}
 	
@@ -490,7 +501,7 @@ public class Map implements World {
 
 	@Override
 	public boolean isOver() {
-		if (!screen.isShowing() || !scoreboard.isShowing()) {
+		if (scoreboard.isOver()) {
 			isOver = true;
 		}
 		return isOver;

@@ -25,8 +25,8 @@ public class MonitorScoreboard extends SharedScoreboard implements Scorekeeper {
 	}
 
 	@Override
-	public synchronized boolean isShowing() {
-		return b.isShowing();
+	public synchronized boolean isOver() {
+		return b.isOver();
 	}
 
 	@Override
