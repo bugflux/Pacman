@@ -11,16 +11,16 @@ import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.Scorekeeper;
 import org.bugflux.pacman.entities.Toggler;
-import org.bugflux.pacman.entities.World;
 import org.bugflux.pacman.input.AutomaticBonusPlacer;
 import org.bugflux.pacman.input.AutomaticDoorman;
 import org.bugflux.pacman.input.KeyboardMover;
 import org.bugflux.pacman.input.MousePositionToggler;
 import org.bugflux.pacman.input.RandomMover;
-import org.bugflux.pacman.monitor.MonitorMap;
-import org.bugflux.pacman.monitor.MonitorPositionToggler;
-import org.bugflux.pacman.monitor.MonitorScoreboard;
-import org.bugflux.pacman.monitor.MonitorWalker;
+import org.bugflux.pacman.shared.SharedMap;
+import org.bugflux.pacman.shared.monitor.MonitorMap;
+import org.bugflux.pacman.shared.monitor.MonitorPositionToggler;
+import org.bugflux.pacman.shared.monitor.MonitorScoreboard;
+import org.bugflux.pacman.shared.monitor.MonitorWalker;
 
 
 public class MonitorDoIt {
@@ -30,9 +30,12 @@ public class MonitorDoIt {
 			System.exit(-1);
 		}
 
-		Scorekeeper score = new MonitorScoreboard(new Scoreboard(5));
+		Scorekeeper score = new MonitorScoreboard(new Scoreboard(6));
 		Map _map = new Map(SequentialDoIt.readLabyrinth(args[0]), score);
-		World map = new MonitorMap(_map);
+		SharedMap map = new MonitorMap(_map);
+
+//		Collector _pacman_ = new Pacman(map);
+//		map.addWalker(_pacman_, new Coord(1, 2));
 
 		Collector _pacman = new Pacman(map);
 		map.addWalker(_pacman, new Coord(1, 1));

@@ -7,13 +7,14 @@ import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.Walkable;
 import org.bugflux.pacman.entities.Walkable.Direction;
+import org.bugflux.pacman.shared.SharedMap;
 
 public class RandomMover extends Thread {
 	protected final Controllable m;
 	protected final Walkable game;
 	protected int ms;
 	
-	public RandomMover(Walkable game, Controllable m, int ms) {
+	public RandomMover(SharedMap game, Controllable m, int ms) {
 		assert game != null;
 		assert m != null;
 		assert ms >= 0;

@@ -1,12 +1,13 @@
-package org.bugflux.pacman.monitor;
+package org.bugflux.pacman.shared.monitor;
 
 import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.Walkable.Direction;
+import org.bugflux.pacman.shared.SharedWalker;
 
 import pt.ua.gboard.Gelem;
 
-public class MonitorWalker implements Controllable {
+public class MonitorWalker extends SharedWalker implements Controllable {
 	protected final Controllable w;
 	
 	/**

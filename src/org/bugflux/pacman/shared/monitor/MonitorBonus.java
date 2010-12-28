@@ -1,10 +1,11 @@
-package org.bugflux.pacman.monitor;
+package org.bugflux.pacman.shared.monitor;
 
 import org.bugflux.pacman.entities.Bonus;
+import org.bugflux.pacman.shared.SharedBonus;
 
 import pt.ua.gboard.Gelem;
 
-public class MonitorBonus implements Bonus {
+public class MonitorBonus extends SharedBonus implements Bonus {
 	protected final Bonus b;
 	
 	public MonitorBonus(Bonus b) {

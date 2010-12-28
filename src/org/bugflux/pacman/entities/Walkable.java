@@ -15,6 +15,15 @@ public interface Walkable extends Game {
 	public abstract Coord move(Controllable w, Direction d);
 
 	/**
+	 * Checks if a Controllable can move in a certain direction.
+	 * 
+	 * @param w The Controllable.
+	 * @param d The direction it wants to move in.
+	 * @return true if it can move in that direction, false otherwise.
+	 */
+	public abstract boolean canMove(Controllable w, Direction d);
+
+	/**
 	 * Add a Walker to a specified row,column coordinate.
 	 * 
 	 * @param w The Walker.

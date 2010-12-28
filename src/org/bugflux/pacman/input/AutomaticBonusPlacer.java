@@ -9,6 +9,7 @@ import org.bugflux.pacman.InvincibilityBonus;
 import org.bugflux.pacman.entities.Bonus;
 import org.bugflux.pacman.entities.Garden;
 import org.bugflux.pacman.entities.Scorekeeper;
+import org.bugflux.pacman.shared.SharedMap;
 
 public class AutomaticBonusPlacer extends Thread {
 	protected final Garden garden;
@@ -26,7 +27,7 @@ public class AutomaticBonusPlacer extends Thread {
 	 * @param everyMs
 	 * @param duringMs
 	 */
-	public AutomaticBonusPlacer(Garden garden, int everyMs, int duringMs, Scorekeeper sc) {
+	public AutomaticBonusPlacer(SharedMap garden, int everyMs, int duringMs, Scorekeeper sc) {
 		assert garden != null;
 		assert sc != null;
 		assert everyMs > 0;

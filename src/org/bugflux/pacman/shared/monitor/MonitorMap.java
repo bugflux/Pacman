@@ -1,4 +1,4 @@
-package org.bugflux.pacman.monitor;
+package org.bugflux.pacman.shared.monitor;
 
 import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.entities.Bonus;
@@ -7,8 +7,9 @@ import org.bugflux.pacman.entities.Controllable;
 import org.bugflux.pacman.entities.Scorekeeper;
 import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.World;
+import org.bugflux.pacman.shared.SharedMap;
 
-public class MonitorMap implements World {
+public class MonitorMap extends SharedMap implements World {
 	protected final World m;
 
 	public MonitorMap(World m) {
@@ -33,6 +34,11 @@ public class MonitorMap implements World {
 	@Override
 	public synchronized Coord move(Controllable w, Direction d) {
 		return m.move(w, d);
+	}
+	
+	@Override
+	public synchronized boolean canMove(Controllable w, Direction d) {
+		return m.canMove(w, d);
 	}
 	
 	@Override

@@ -3,17 +3,7 @@ package org.bugflux.pacman.entities;
 import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.entities.Walkable.Direction;
 
-import pt.ua.gboard.Gelem;
-
-public interface Controllable {
-	public static enum Team { GOOD, VILLAIN };
-
-	/**
-	 * 
-	 * @return
-	 */
-	public abstract Team team();
-	
+public interface Controllable extends Player {
 	/**
 	 * 
 	 * @return
@@ -31,22 +21,5 @@ public interface Controllable {
 	 * 
 	 * @return
 	 */
-	public abstract Gelem gelem();
-	
-	/**
-	 * 
-	 * @return
-	 */
 	public abstract boolean canMove(Direction d);
-	
-	/**
-	 * 
-	 */
-	public abstract void die();
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public abstract boolean isDead();
 }

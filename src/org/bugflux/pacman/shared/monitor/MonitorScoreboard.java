@@ -1,11 +1,12 @@
-package org.bugflux.pacman.monitor;
+package org.bugflux.pacman.shared.monitor;
 
 import org.bugflux.pacman.Scoreboard;
 import org.bugflux.pacman.entities.Scorekeeper;
+import org.bugflux.pacman.shared.SharedScoreboard;
 
 import pt.ua.gboard.Gelem;
 
-public class MonitorScoreboard implements Scorekeeper {
+public class MonitorScoreboard extends SharedScoreboard implements Scorekeeper {
 	protected final Scorekeeper b;
 	
 	public MonitorScoreboard(Scoreboard b) {

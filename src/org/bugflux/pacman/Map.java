@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.bugflux.pacman.entities.Bonus;
+import org.bugflux.pacman.entities.Bonus.Property;
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Controllable;
-import org.bugflux.pacman.entities.Bonus.Property;
-import org.bugflux.pacman.entities.Controllable.Team;
+import org.bugflux.pacman.entities.Player.Team;
 import org.bugflux.pacman.entities.Scorekeeper;
 import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.World;
@@ -211,6 +211,17 @@ public class Map implements World {
 		assert !isOver();
 		return move(w, d, false);
 	}
+	
+	@Override
+	public boolean canMove(Controllable w, Direction d) {
+		assert walkers.containsKey(w);
+		assert !w.isDead();
+		
+		Coord oldC = walkers.get(w);
+		Coord c = newCoord(oldC, d);
+		
+		return isHall(c);
+	}
 
 	private Coord move(Controllable w, Direction d, boolean collect) {
 		assert walkers.containsKey(w);
@@ -262,7 +273,7 @@ public class Map implements World {
 				// the good one dies.
 				// if either has "Invincibility, don't lose!
 				for(Bonus b : activeBonuses.keySet()) {
-					if(b.property() == Property.Invincible
+					if(b.property() == Property.Invincibility
 							&& (activeBonuses.get(b).equals(contr) || activeBonuses.get(b).equals(w))) {
 						return oldC;
 					}

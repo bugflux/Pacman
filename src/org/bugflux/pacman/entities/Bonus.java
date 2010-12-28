@@ -3,7 +3,7 @@ package org.bugflux.pacman.entities;
 import pt.ua.gboard.Gelem;
 
 public interface Bonus {
-	public static enum Property { Invincible, FreezeOpposing };
+	public static enum Property { Invincibility, FreezeOpposing };
 	
 	/**
 	 * Get the property of this Bonus.

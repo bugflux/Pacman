@@ -1,43 +1,35 @@
 
 public class Test {
 	public static void main(String args[]) {
-		function(new Parent());
-		function(new Child());
-	}
-	
-	public static void function(ParentInterface p) {
-		System.out.println(p.toStringParent());
-	}
-	
-	public static void function(ChildInterface c) {
-		System.out.println(c.toStringChild());
-		System.out.println(c.toStringParent());
+		Parent po = new Parent();
+		Child co = new Child();
+		System.out.print(po.toString(po) + " ");
+		System.out.print(co.toString(co) + " ");
+		
+		ParentInterface pi = po;
+		ChildInterface ci = co;
+		System.out.print(pi.toString(pi) + " ");
+		System.out.print(ci.toString(ci));
 	}
 }
 
 interface ParentInterface {
-	public String toStringParent();
+	public String toString(ParentInterface p);
 }
 
 interface ChildInterface extends ParentInterface {
-	public String toStringChild();
+	public String toString(ChildInterface c);
 }
 
 class Parent implements ParentInterface {
-	@Override
-	public String toStringParent() {
+	public String toString(ParentInterface p) {
 		return "parent";
 	}
 }
 
 class Child extends Parent implements ChildInterface {
 	@Override
-	public String toStringChild() {
-		return "child";
-	}
-
-	@Override
-	public String toStringParent() {
+	public String toString(ChildInterface p) {
 		return "child";
 	}
 }

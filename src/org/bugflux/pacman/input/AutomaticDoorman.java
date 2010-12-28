@@ -7,6 +7,7 @@ import org.bugflux.pacman.Coord;
 import org.bugflux.pacman.entities.MorphingWalkable;
 import org.bugflux.pacman.entities.Toggler;
 import org.bugflux.pacman.entities.Walkable.PositionType;
+import org.bugflux.pacman.shared.SharedMap;
 
 public class AutomaticDoorman extends Thread {
 	protected final Coord door;
@@ -24,7 +25,7 @@ public class AutomaticDoorman extends Thread {
 	 * @param minWaitPeriod
 	 * @param minToggledPeriod
 	 */
-	public AutomaticDoorman(MorphingWalkable game, Toggler toggler, Coord door, int minWaitPeriod, int minToggledPeriod) {
+	public AutomaticDoorman(SharedMap game, Toggler toggler, Coord door, int minWaitPeriod, int minToggledPeriod) {
 		assert door != null;
 		assert toggler != null;
 		assert game != null;
