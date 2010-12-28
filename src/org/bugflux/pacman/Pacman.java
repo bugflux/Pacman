@@ -4,16 +4,22 @@ import java.awt.Color;
 
 import org.bugflux.pacman.entities.Collector;
 import org.bugflux.pacman.entities.Garden;
+import org.bugflux.pacman.entities.Scorekeeper;
 import org.bugflux.pacman.entities.Walkable.Direction;
 
 public class Pacman extends Walker implements Collector {
 	protected int energy;
-	protected Garden w;
+	protected final Garden w;
+	protected final Scorekeeper score;
+	protected final int scoreId;
 	
-	public Pacman(Garden w) {
+	public Pacman(Garden w, Scorekeeper score) {
 		super(w, new _PacmanGelem(Color.yellow), Team.GOOD);
+		assert score != null;
 		this.w = w; // needed to benefit from polymorphism { move(Collector) is present in Garden, not Walkable }
 		energy = 10;
+		this.score = score;
+		scoreId = score.addCounter(gelem(), energy);
 	}
 
 	@Override
@@ -39,6 +45,7 @@ public class Pacman extends Walker implements Collector {
 			// could have died in result of that move:
 			if(!w.isOver() && w.hasCollectable(result)) {
 				w.collect(this);
+				score.setValue(scoreId, energy());
 			}
 			return result;
 		}

@@ -18,4 +18,11 @@ public interface Bonus {
 	 * @return this Bonus' Gelem.
 	 */
 	public abstract Gelem gelem();
+	
+	/**
+	 * Get the energy cost of acquiring this Bonus.
+	 * 
+	 * @return the energy cost.
+	 */
+	public abstract int energyCost();
 }

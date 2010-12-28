@@ -44,7 +44,6 @@ public class Map implements World, WindowListener {
 	protected final int backgroundGelemId;
 
 	protected final Scorekeeper scoreboard;
-	protected final HashMap<Collector, Integer> scoreWalkersId;
 	protected int scoreBeanId;
 
 	protected final HashMap<Bonus, Collector> activeBonuses;
@@ -70,7 +69,6 @@ public class Map implements World, WindowListener {
 		beanMap = new int[height()][width()];
 
 		walkers = new HashMap<Controllable, Coord>();
-		scoreWalkersId = new HashMap<Collector, Integer>();
 		bonuses = new HashMap<Bonus, Coord>();
 		activeBonuses = new HashMap<Bonus, Collector>();
 		togglers = new ArrayList<Toggler>();
@@ -181,8 +179,6 @@ public class Map implements World, WindowListener {
 	public void addWalker(Collector w, Coord c) {
 		assert !isOver();
 		internalAddWalker(w, c);
-
-		scoreWalkersId.put(w, scoreboard.addCounter(w.gelem(), w.energy()));
 	}
 
 	@Override
@@ -339,11 +335,17 @@ public class Map implements World, WindowListener {
 			}
 			eraseBonus(b);
 			activeBonuses.put(b, w);
+			w.looseEnergy(b.energyCost());
+			if(w.energy() <= 0) {
+				killWalker(w);
+			}
 		}
 		
-		if (hasBean(c)) {
-			w.gainEnergy(3);
-			removeBean(c);
+		if(!isOver()) {
+			if (hasBean(c)) {
+				w.gainEnergy(3);
+				removeBean(c);
+			}
 		}
 	}
 

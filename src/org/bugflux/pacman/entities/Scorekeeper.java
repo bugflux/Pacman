@@ -2,7 +2,7 @@ package org.bugflux.pacman.entities;
 
 import pt.ua.gboard.Gelem;
 
-public interface Scorekeeper {
+public interface Scorekeeper extends Game {
 	/**
 	 * Adds a counter to this scorekeeper.
 	 * 
@@ -34,10 +34,4 @@ public interface Scorekeeper {
 	 * @return The value of that score.
 	 */
 	public abstract int getValue(int id);
-	
-	/**
-	 * Check whether this keeper is still active.
-	 * @return
-	 */
-	public abstract boolean isOver();
 }

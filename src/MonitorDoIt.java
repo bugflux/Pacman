@@ -38,7 +38,7 @@ public class MonitorDoIt {
 //		Collector _pacman_ = new Pacman(map);
 //		map.addWalker(_pacman_, new Coord(1, 2));
 
-		Collector _pacman = new Pacman(map);
+		Collector _pacman = new Pacman(map, score);
 		map.addWalker(_pacman, new Coord(1, 1));
 		Controllable pacman = new MonitorWalker(_pacman);
 		KeyboardMover controller = new KeyboardMover(map, pacman);

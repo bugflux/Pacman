@@ -23,4 +23,9 @@ public class MonitorBonus extends SharedBonus implements Bonus {
 	public synchronized Gelem gelem() {
 		return b.gelem();
 	}
+
+	@Override
+	public int energyCost() {
+		return b.energyCost();
+	}
 }

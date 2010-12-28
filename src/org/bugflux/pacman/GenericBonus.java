@@ -13,13 +13,16 @@ import pt.ua.gboard.Gelem;
 public class GenericBonus implements Bonus {
 	protected final Property p;
 	protected final Gelem gelem;
+	protected final int energyCost;
 	
-	public GenericBonus(Gelem gelem, Property p) {
+	public GenericBonus(Gelem gelem, Property p, int energyCost) {
 		assert gelem != null;
 		assert p != null;
+		assert energyCost >= 0;
 
 		this.gelem = gelem;
 		this.p = p;
+		this.energyCost = energyCost;
 	}
 
 	@Override
@@ -30,5 +33,10 @@ public class GenericBonus implements Bonus {
 	@Override
 	public Gelem gelem() {
 		return gelem;
+	}
+
+	@Override
+	public int energyCost() {
+		return energyCost;
 	}
 }
