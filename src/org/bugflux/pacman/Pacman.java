@@ -35,7 +35,12 @@ public class Pacman extends Walker implements Collector {
 	@Override
 	public Coord move(Direction d) {
 		if(!isDead() && canMove(d)) {
-			return w.move(this, d);
+			Coord result = w.move(this, d);
+			// could have died in result of that move:
+			if(!w.isOver() && w.hasCollectable(result)) {
+				w.collect(this);
+			}
+			return result;
 		}
 
 		return null;
