@@ -42,11 +42,6 @@ public class MonitorMap extends SharedMap implements World {
 	}
 	
 	@Override
-	public Coord move(Collector w, Direction d) {
-		return m.move(w, d);
-	}
-	
-	@Override
 	public synchronized Coord position(Controllable c) {
 		return m.position(c);
 	}

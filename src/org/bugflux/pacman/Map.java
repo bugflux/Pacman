@@ -199,18 +199,6 @@ public class Map implements World {
 		assert walkers.containsKey(w);
 		return walkers.get(w);
 	}
-
-	@Override
-	public Coord move(Collector w, Direction d) {
-		assert !isOver();
-		return move(w, d, true);
-	}
-
-	@Override
-	public Coord move(Controllable w, Direction d) {
-		assert !isOver();
-		return move(w, d, false);
-	}
 	
 	@Override
 	public boolean canMove(Controllable w, Direction d) {
@@ -223,7 +211,7 @@ public class Map implements World {
 		return isHall(c);
 	}
 
-	private Coord move(Controllable w, Direction d, boolean collect) {
+	public Coord move(Controllable w, Direction d) {
 		assert walkers.containsKey(w);
 		assert !w.isDead();
 
@@ -245,24 +233,10 @@ public class Map implements World {
 			// TODO this is temporary inconsistency!
 			walkers.put(w, c); // replace the walkers coordinates before collecting!
 
-			if (collect) {
-				Collector guy = (Collector) w;
-				collect(guy);
-				guy.looseEnergy(1);
-				scoreboard.setValue(scoreWalkersId.get(w), guy.energy());
-			}
-
 			walkersMap[c.r()][c.c()] = walkersMap[oldC.r()][oldC.c()];
 			screen.move(walkersMap[oldC.r()][oldC.c()], oldC.r(), oldC.c(),
 					walkerLayer, c.r(), c.c(), walkerLayer);
 			walkersMap[oldC.r()][oldC.c()] = 0;
-
-			if (collect) {
-				Collector guy = (Collector) w;
-				if (guy.isDead()) {
-					killWalker(guy);
-				}
-			}
 
 			return c;
 		}

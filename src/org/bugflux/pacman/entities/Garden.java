@@ -28,18 +28,6 @@ public interface Garden extends Walkable {
 	public abstract void addWalker(Collector w, Coord c);
 	
 	/**
-	 * TODO: external sync and collect() outside.
-	 * 
-	 * Special move in a garden. Tries to collect whatever
-	 * is in the destination position beforehand.
-	 * 
-	 * @param w The collector to move.
-	 * @param d The direction to move in.
-	 * @return the final coordinates of the collector in the map.
-	 */
-	public abstract Coord move(Collector w, Direction d);
-	
-	/**
 	 * Place a Bonus in this map.
 	 * 
 	 * @param b The Bonus to place.

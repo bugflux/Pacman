@@ -20,9 +20,6 @@ public abstract class SharedMap implements World {
 	public abstract void addWalker(Collector w, Coord c);
 
 	@Override
-	public abstract Coord move(Collector w, Direction d);
-
-	@Override
 	public abstract void addBonus(Bonus b, Coord c);
 
 	@Override
